@@ -16,8 +16,8 @@ const GANHOS = [
   { acao: "Review completa (fotos, tamanho e medidas)", pontos: PONTOS.reviewCompleta },
   { acao: "Review só com texto e notas", pontos: PONTOS.reviewSimples },
   { acao: "Resposta a uma pergunta", pontos: PONTOS.resposta },
-  { acao: "Voto GL ou RL com motivo", pontos: PONTOS.votoComMotivo },
-  { acao: "Voto GL ou RL simples", pontos: PONTOS.votoSimples },
+  { acao: "Voto no QC com o motivo da reprovação", pontos: PONTOS.votoComMotivo },
+  { acao: "Voto no QC (GL ou RL)", pontos: PONTOS.votoSimples },
 ];
 
 export default function Planos() {

@@ -71,11 +71,17 @@ export default function VotacaoQc({ qc, meu = false }: { qc: Qc; meu?: boolean }
     <div className="flex flex-col gap-4">
       <PlacarQc qc={qc} />
       <Motivos qc={qc} />
-      <p className="font-semibold">Qual o seu voto?</p>
+      <p className="font-semibold">Você enviaria esta peça?</p>
       <div className="grid grid-cols-2 gap-2">
-        <BotaoVeredito veredito="GL" ativo={escolha === "GL"} onClick={() => { setEscolha("GL"); setMotivos([]); }} legenda="Pode enviar" />
-        <BotaoVeredito veredito="RL" ativo={escolha === "RL"} onClick={() => setEscolha("RL")} legenda="Melhor trocar" />
+        <BotaoVeredito veredito="GL" ativo={escolha === "GL"} onClick={() => { setEscolha("GL"); setMotivos([]); }} legenda="Sinal verde, pode enviar" />
+        <BotaoVeredito veredito="RL" ativo={escolha === "RL"} onClick={() => setEscolha("RL")} legenda="Sinal vermelho, melhor trocar" />
       </div>
+      <p className="text-sm text-apagado">
+        GL e RL vêm de Green Light e Red Light, como a comunidade chama a aprovação e a reprovação do QC.{" "}
+        <Link href="/ajuda#gl" className="font-semibold text-cobalto hover:underline">
+          Saiba mais
+        </Link>
+      </p>
 
       {escolha === "RL" && (
         <fieldset className="flex flex-col gap-2">
@@ -102,7 +108,7 @@ export default function VotacaoQc({ qc, meu = false }: { qc: Qc; meu?: boolean }
           onClick={() => setGanhou(votar(qc.id, escolha, motivos))}
           className="rounded-md bg-tinta px-4 py-2.5 font-semibold text-cartao"
         >
-          Votar {escolha} (+{pontosDoVoto} {pontosDoVoto === 1 ? "ponto" : "pontos"})
+          Confirmar voto {escolha} (+{pontosDoVoto} {pontosDoVoto === 1 ? "ponto" : "pontos"})
         </button>
       )}
     </div>
@@ -120,7 +126,7 @@ function Motivos({ qc }: { qc: Qc }) {
   if (!lista.length) return null;
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-sm text-apagado">Motivos de quem votou RL</p>
+      <p className="text-sm text-apagado">Motivos de quem votou RL (melhor trocar)</p>
       <ul className="flex flex-wrap gap-2 text-sm">
         {lista.map((m) => (
           <li key={m.motivo} className="rounded-full bg-rl-claro px-3 py-1 text-rl">

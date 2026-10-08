@@ -1,5 +1,7 @@
 import Link from "next/link";
 import BuscaLink from "@/components/BuscaLink";
+import BoasVindas from "@/components/BoasVindas";
+import Termo from "@/components/Termo";
 import { CartaoQc, CartaoReview } from "@/components/Cartoes";
 import { buscarProduto, lojas, produtosDaLoja, qcs, qcsDo, reviews } from "@/lib/dados";
 import { taxaRl } from "@/lib/calculos";
@@ -39,16 +41,19 @@ export default function Inicio() {
         </div>
       </section>
 
+      <BoasVindas />
+
       <div className="grid gap-10 lg:grid-cols-[1fr_24rem]">
         <section className="flex min-w-0 flex-col gap-4">
           <div className="flex items-baseline justify-between gap-4">
-            <h2 className="text-2xl font-bold">Esperando GL ou RL</h2>
+            <h2 className="text-2xl font-bold">Peças esperando avaliação</h2>
             <Link href="/qc" className="text-sm font-semibold text-cobalto hover:underline">
               Ver o armazém
             </Link>
           </div>
           <p className="-mt-2 text-apagado">
-            Peças paradas no armazém do agente. Seu voto ajuda quem comprou a decidir se envia ou troca.
+            Fotos de <Termo id="qc">QC</Termo> tiradas no armazém do agente, antes do envio. Vote{" "}
+            <Termo id="gl">GL</Termo> se a peça está boa ou <Termo id="rl">RL</Termo> se é melhor trocar.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             {noArmazem.map((qc) => (
@@ -99,7 +104,7 @@ export default function Inicio() {
                 </div>
                 <p className="text-sm text-apagado">
                   {plural(doLoja.length, "produto avaliado", "produtos avaliados")}
-                  {rl && `, ${formatarPorcentagem(rl.taxa)} de RL no QC`}
+                  {rl && `, ${formatarPorcentagem(rl.taxa)} das peças reprovadas no QC`}
                 </p>
                 <p className="text-sm">Cupom de 8% para quem chega pelo Provado.</p>
               </Link>

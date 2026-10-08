@@ -58,7 +58,7 @@ async function Lista({ searchParams }: { searchParams: PageProps<"/ranking">["se
                 <span className="block font-semibold">{item.produto.titulo}</span>
                 <span className="text-sm text-apagado">
                   {item.loja.nome}, {plural(item.totalReviews, "review", "reviews")}, média simples {formatarNota(item.nota)}
-                  {item.rl && `, RL ${formatarPorcentagem(item.rl.taxa)}`}
+                  {item.rl && `, ${formatarPorcentagem(item.rl.taxa)} reprovados no QC`}
                 </span>
               </span>
               <span className="font-display text-2xl font-extrabold tabular-nums">{formatarNota(item.pontuacao)}</span>

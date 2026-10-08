@@ -17,7 +17,7 @@ export default function Carimbo({
   entrada?: boolean;
 }) {
   const cor = veredito === "GL" ? "text-gl" : "text-rl";
-  const titulo = veredito === "GL" ? "GL: pode enviar" : "RL: melhor trocar";
+  const titulo = veredito === "GL" ? "GL (Green Light): aprovado, pode enviar" : "RL (Red Light): reprovado, melhor trocar";
   return (
     <span className={`carimbo ${cor} ${TAMANHOS[tamanho]} ${entrada ? "carimbo-entrada" : ""}`} title={titulo}>
       {veredito}

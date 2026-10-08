@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/qc", rotulo: "Armazém" },
   { href: "/ranking", rotulo: "Ranking" },
   { href: "/planos", rotulo: "Planos" },
+  { href: "/ajuda", rotulo: "Ajuda" },
 ];
 
 export default function Cabecalho() {

@@ -35,14 +35,14 @@ export default async function PaginaLoja(props: PageProps<"/loja/[id]">) {
         </div>
         <p className="text-apagado">
           Loja no {NOMES_PLATAFORMA[loja.plataforma]} desde {loja.desde}.
-          {loja.parceira && " A parceria não altera notas, reviews, taxa de RL nem a posição no ranking."}
+          {loja.parceira && " A parceria não altera notas, reviews, taxa de reprovação nem a posição no ranking."}
         </p>
       </div>
 
       <dl className="grid gap-4 sm:grid-cols-3">
         <Numero rotulo="Nota média das reviews" valor={formatarNota(notaGeral(reviews))} detalhe={plural(reviews.length, "review", "reviews")} />
         <Numero
-          rotulo="Taxa de RL no QC"
+          rotulo="Peças reprovadas no QC (RL)"
           valor={rl ? formatarPorcentagem(rl.taxa) : "Sem dados"}
           detalhe={rl ? `em ${plural(rl.total, "QC revisado", "QCs revisados")}` : "Nenhum QC decidido ainda"}
         />

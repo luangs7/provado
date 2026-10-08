@@ -63,7 +63,7 @@ async function Resultado({ searchParams }: { searchParams: PageProps<"/buscar">[
           className="flex flex-col gap-1 rounded-lg border border-linha bg-cartao p-4 hover:border-tinta"
         >
           <span className="font-semibold">Postar fotos de QC</span>
-          <span className="text-sm text-apagado">Está no armazém do agente? Peça GL ou RL para a comunidade.</span>
+          <span className="text-sm text-apagado">Está no armazém do agente? A comunidade avalia as fotos antes do envio.</span>
         </Link>
       </div>
       <BuscaLink />

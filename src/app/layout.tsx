@@ -21,6 +21,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <footer className="border-t border-linha bg-cartao">
           <div className="mx-auto flex max-w-6xl flex-wrap gap-x-6 gap-y-2 px-4 py-6 text-sm text-apagado">
             <span>Provado (nome provisório)</span>
+            <Link href="/ajuda" className="hover:text-tinta">
+              Como funciona
+            </Link>
             <Link href="/planos" className="hover:text-tinta">
               Planos
             </Link>

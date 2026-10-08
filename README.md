@@ -23,7 +23,8 @@ Para conferir antes de subir: `npm run lint` e `npm run build`.
 4. Clique em **Postar QC**, envie uma foto qualquer e publique. No QC, marque **Enviei** e depois **Transformar em review**: a review nasce já ligada ao QC.
 5. Em **Planos**, assine o Plus (simulado) e volte a um produto: os filtros por corpo parecido e os filtros avançados passam a funcionar.
 6. O **perfil** mostra pontos, selos, a etapa de cada pedido e o extrato.
-7. A faixa amarela no topo tem **Recomeçar demonstração**, que zera tudo.
+7. Em **Ajuda** está o passo a passo do site, o glossário (QC, GL, RL, agente…) e perguntas frequentes. Na primeira visita, a tela inicial mostra um tutorial curto. Termos como GL e RL têm uma explicação ao tocar.
+8. A faixa amarela no topo tem **Recomeçar demonstração**, que zera tudo.
 
 ## Estrutura
 
@@ -35,13 +36,14 @@ src/
     produto/[id]/          página do produto
     qc/                    armazém, QC e postar QC
     review/nova/           publicar review
-    ranking/  loja/[id]/  planos/  perfil/
+    ranking/  loja/[id]/  planos/  perfil/  ajuda/
   components/              peças de tela reutilizáveis
   lib/
     tipos.ts               modelos (viram as data classes do backend)
     link.ts                leitor de links → (plataforma, itemId)
     calculos.ts            notas, média bayesiana, tamanho, taxa de RL
     regras.ts              pontos e limite do plano gratuito
+    glossario.ts  ajuda.ts textos de ajuda: termos, passo a passo e perguntas frequentes
     dados.ts               dados de exemplo (lojas, produtos, reviews, QCs)
     resumos.ts             dados + cálculos prontos para as telas
     demo.ts                estado da demonstração no navegador

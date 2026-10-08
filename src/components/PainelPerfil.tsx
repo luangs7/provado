@@ -66,7 +66,7 @@ export default function PainelPerfil() {
           </Link>
         </div>
         {demo.qcs.length === 0 ? (
-          <Vazio>Nenhum QC postado. Quando sua compra chegar no armazém do agente, poste as fotos para pedir GL ou RL.</Vazio>
+          <Vazio>Nenhum QC postado. Quando sua compra chegar no armazém do agente, poste as fotos para a comunidade avaliar antes do envio.</Vazio>
         ) : (
           <ul className="flex flex-col divide-y divide-linha rounded-lg border border-linha bg-cartao">
             {demo.qcs.map((qc) => {

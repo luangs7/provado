@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CartaoQc } from "@/components/Cartoes";
 import QcsLocais from "@/components/QcsLocais";
+import Termo from "@/components/Termo";
 import { buscarProduto, qcs } from "@/lib/dados";
 
 export const metadata = { title: "Armazém" };
@@ -16,8 +17,10 @@ export default function Armazem() {
           <div className="flex max-w-2xl flex-col gap-2">
             <h1 className="text-4xl font-extrabold">Armazém</h1>
             <p className="text-lg text-apagado">
-              Compras por agente param no armazém antes do envio. Aqui a comunidade olha as fotos de QC e vota GL para
-              enviar ou RL para trocar. Compras feitas direto com a loja não passam por esta etapa.
+              Compras por agente param no armazém antes do envio. Aqui a comunidade olha as fotos de{" "}
+              <Termo id="qc">QC</Termo> e vota <Termo id="gl">GL</Termo>, sinal verde para enviar, ou{" "}
+              <Termo id="rl">RL</Termo>, sinal vermelho para trocar. Compras feitas direto com a loja não passam por esta
+              etapa.
             </p>
           </div>
           <Link href="/qc/novo" className="rounded-md bg-cobalto px-4 py-2.5 font-semibold text-white hover:bg-cobalto-escuro">

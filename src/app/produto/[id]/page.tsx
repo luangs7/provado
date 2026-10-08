@@ -6,6 +6,7 @@ import { BarrasNotas, CartaoQc } from "@/components/Cartoes";
 import QcsLocais from "@/components/QcsLocais";
 import SecaoPerguntas from "@/components/SecaoPerguntas";
 import SecaoReviews from "@/components/SecaoReviews";
+import Termo from "@/components/Termo";
 import { ANGULOS, CATEGORIAS, buscarProduto, perguntasDo, produtos, qcsDo, reviewsDo } from "@/lib/dados";
 import { mediaPorCriterio, recomendacaoTamanho, resumoCaimento } from "@/lib/calculos";
 import { formatarNota, formatarPorcentagem, formatarPreco, plural } from "@/lib/formato";
@@ -75,8 +76,10 @@ export default async function PaginaProduto(props: PageProps<"/produto/[id]">) {
               <span className="mt-1 text-sm text-apagado">{plural(totalReviews, "review", "reviews")}</span>
               {rl && (
                 <span className="mt-3 text-sm">
-                  <span className="font-semibold">{formatarPorcentagem(rl.taxa)} de RL</span>
-                  <span className="text-apagado"> em {plural(rl.total, "QC", "QCs")}</span>
+                  <span className="font-semibold">
+                    <Termo id="taxa-rl">{formatarPorcentagem(rl.taxa)} reprovados</Termo>
+                  </span>
+                  <span className="block text-apagado">em {plural(rl.total, "QC revisado", "QCs revisados")}</span>
                 </span>
               )}
             </div>
@@ -118,8 +121,8 @@ export default async function PaginaProduto(props: PageProps<"/produto/[id]">) {
             conteudo: (
               <div className="flex flex-col gap-6">
                 <p className="max-w-2xl text-apagado">
-                  Fotos tiradas pelo agente no armazém, antes do envio. Compare com a sua unidade antes de decidir se envia
-                  ou troca.
+                  Fotos tiradas pelo agente no armazém, antes do envio. Cada QC recebe votos <Termo id="gl">GL</Termo>{" "}
+                  (pode enviar) ou <Termo id="rl">RL</Termo> (melhor trocar). Compare com a sua unidade antes de decidir.
                 </p>
                 <QcsLocais produtoId={produto.id} titulo="Seus QCs deste produto" />
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

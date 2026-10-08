@@ -23,6 +23,7 @@ export type EstadoDemo = {
   perguntas: Pergunta[];
   respostas: Record<string, { texto: string; data: string }[]>; // por id de pergunta
   desbloqueados: string[]; // produtos liberados com pontos
+  tutorialVisto: boolean;
 };
 
 const INICIAL: EstadoDemo = {
@@ -35,6 +36,7 @@ const INICIAL: EstadoDemo = {
   perguntas: [],
   respostas: {},
   desbloqueados: [],
+  tutorialVisto: false,
 };
 
 const CHAVE = "provado-demo-v1";
@@ -70,6 +72,13 @@ function inscrever(avisar: () => void) {
 // No servidor (e no primeiro render) o estado é o inicial; depois o React troca pelo salvo.
 export function useDemo() {
   return useSyncExternalStore(inscrever, ler, () => INICIAL);
+}
+
+// true só depois que a página carregou no navegador (evita piscar conteúdo
+// que depende do que está salvo, como o tutorial já fechado)
+const nada = () => () => {};
+export function useNoNavegador() {
+  return useSyncExternalStore(nada, () => true, () => false);
 }
 
 const agora = () => new Date().toISOString();
@@ -146,6 +155,10 @@ export function desbloquear(produtoId: string) {
 
 export function mudarPlano(plano: EstadoDemo["plano"]) {
   gravar({ ...ler(), plano });
+}
+
+export function fecharTutorial() {
+  gravar({ ...ler(), tutorialVisto: true });
 }
 
 export function recomecar() {

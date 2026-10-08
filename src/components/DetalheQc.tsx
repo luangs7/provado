@@ -59,7 +59,7 @@ export default function DetalheQc({ qc, produto, meu = false }: { qc: Qc; produt
           {qc.decisao !== "aguardando" && veredito && (
             <div className="flex items-center gap-4">
               <Carimbo veredito={veredito} tamanho="g" />
-              <p className="text-apagado">Veredito da comunidade</p>
+              <p className="text-apagado">{veredito === "GL" ? "Aprovado pela comunidade: pode enviar." : "Reprovado pela comunidade: melhor trocar."}</p>
             </div>
           )}
 
@@ -69,10 +69,12 @@ export default function DetalheQc({ qc, produto, meu = false }: { qc: Qc; produt
 
           {loja && rlLoja && (
             <p className="text-sm text-apagado">
+              Na{" "}
               <Link href={`/loja/${loja.id}`} className="font-semibold text-tinta hover:underline">
                 {loja.nome}
-              </Link>{" "}
-              teve {formatarPorcentagem(rlLoja.taxa)} de RL em {plural(rlLoja.total, "QC revisado", "QCs revisados")}.
+              </Link>
+              , a comunidade reprovou {formatarPorcentagem(rlLoja.taxa)} das peças em{" "}
+              {plural(rlLoja.total, "QC revisado", "QCs revisados")}.
             </p>
           )}
         </div>

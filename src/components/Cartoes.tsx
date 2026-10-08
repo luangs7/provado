@@ -25,7 +25,7 @@ export function CartaoProduto({ resumo }: { resumo: ReturnType<typeof resumoDoPr
         <span className="mt-auto flex flex-wrap gap-x-3 text-sm">
           <span className="font-semibold tabular-nums">{formatarNota(nota)}</span>
           <span className="text-apagado">{plural(totalReviews, "review", "reviews")}</span>
-          {rl && <span className="text-apagado">RL {formatarPorcentagem(rl.taxa)}</span>}
+          {rl && <span className="text-apagado">{formatarPorcentagem(rl.taxa)} reprovados no QC</span>}
         </span>
       </div>
     </Link>
@@ -47,7 +47,7 @@ export function PlacarQc({ qc }: { qc: Qc }) {
   const total = gl + rl;
   if (!total) return <p className="text-sm text-apagado">Ainda sem votos</p>;
   return (
-    <div className="flex h-6 overflow-hidden rounded text-xs font-semibold text-white" role="img" aria-label={`${gl} votos GL e ${rl} votos RL`}>
+    <div className="flex h-6 overflow-hidden rounded text-xs font-semibold text-white" role="img" aria-label={`${gl} votos GL, pode enviar, e ${rl} votos RL, melhor trocar`}>
       {gl > 0 && (
         <span className="flex items-center bg-gl px-2" style={{ width: `${(gl / total) * 100}%` }}>
           GL {gl}
