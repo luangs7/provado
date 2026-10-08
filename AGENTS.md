@@ -70,6 +70,16 @@ src/
 9. **Sem barrel files** (`index.ts` reexportando tudo): importar o arquivo direto.
 10. **Estado do cliente isolado:** o estado da demonstração é dividido por assunto (pontos, curtidas, medidas…), com ações pequenas, em vez de um único store gigante.
 
+### Micro frontend: avaliado e não adotado
+- **O que é no Next.js:** Multi-Zones, ou seja, o site dividido em várias aplicações Next separadas, servidas no mesmo domínio e publicadas de forma independente (guia "Multi-zones" na documentação instalada).
+- **Por que não agora:**
+  - micro frontend resolve um problema de **times independentes**, e o projeto tem um desenvolvedor;
+  - navegar entre zonas **recarrega a página inteira**, e o Provado é muito interligado (review → produto → peça antes do envio → perfil de quem escreveu), então quase toda navegação cruzaria zonas;
+  - cabeçalho, login, pontos, plano, selos e componentes visuais teriam de virar pacotes compartilhados ou ser duplicados, o que vai contra o DRY;
+  - vários builds, deploys e configurações para uma pessoa manter.
+- **O que usamos no lugar:** a arquitetura por feature acima, que dá o mesmo isolamento dentro de uma única aplicação.
+- **Quando reavaliar:** se houver times separados publicando partes diferentes do site, ou uma área com público, login e navegação próprios. O melhor candidato é um futuro painel para lojas parceiras. Como cada feature já fica isolada, ela poderia virar uma zona sem reescrever o resto.
+
 ### Arquitetura alvo do backend (Ktor)
 ```
 backend/src/main/kotlin/
