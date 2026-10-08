@@ -337,4 +337,9 @@ Ordem sugerida:
 - GitHub: `luangs7/provado` (branch `main`). O repositório nasceu com um LICENSE; os commits do protótipo foram colocados por cima.
 - Cópia local do Luan: `~/Development/provado`.
 - Mensagens de commit em português, descrevendo o que mudou para quem usa.
+- **Deploy:** o repositório está ligado ao Vercel (desde out. 2026). Com a integração padrão do Vercel com o GitHub, push na `main` publica em produção e push em outra branch gera uma prévia com link próprio.
+- **Regra do Luan: ao terminar cada alteração, perguntar duas coisas antes de agir:**
+  1. **Vamos subir?** Se sim, em uma branch nova ou direto na `main`?
+  2. **Vamos fazer o deploy?**
+  Não fazer push nem deploy sem as duas respostas.
 - Antes de subir: `npm run lint` e `npm run build` sem erros.
