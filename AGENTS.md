@@ -30,6 +30,61 @@ Este arquivo reúne tudo o que foi decidido até aqui, para qualquer pessoa ou a
 
 ---
 
+## 1.1 Regra permanente de arquitetura
+
+Pedido do Luan: toda decisão de estrutura deve seguir o **padrão de mercado atual**, pesquisado em fontes reais (documentação oficial, projetos com muitas estrelas no GitHub, comunidades). Nada de god class ou god file. Componentizar ao máximo. SOLID, DRY e design patterns são essenciais.
+
+### Referências usadas (pesquisa de out. 2026)
+- **Next.js (docs oficiais da versão instalada):** o framework não impõe estrutura, mas documenta "dividir os arquivos por feature ou rota", pastas privadas `_pasta` e **Data Access Layer** (camada de dados `server-only` que devolve DTOs mínimos) como recomendação para projetos novos.
+- **bulletproof-react** (~35,8 mil estrelas): código organizado em `src/features/<feature>`; features **não importam umas das outras** (são compostas na camada `app`); fluxo de dependência em um só sentido **shared → features → app**, garantido por ESLint (`import/no-restricted-paths`); sem barrel files.
+- **Feature-Sliced Design**: mesma ideia com mais camadas (`shared`, `entities`, `features`, `widgets`, `pages`, `app`). Avaliado e **não adotado** por enquanto: mais rígido e com mais cerimônia do que um projeto tocado por uma pessoa precisa. Se o time crescer, é o próximo passo natural.
+- **Ktor (docs oficiais):** para aplicações médias, **agrupar por feature** (rotas, serviço e DTOs juntos); domínio sem dependência de Ktor ou banco; interfaces de repositório no domínio e implementações na infraestrutura; dependências injetadas nas funções de módulo e montadas no `Application.kt`.
+
+### Arquitetura alvo do front (Next.js)
+```
+src/
+  app/                    só rotas: page.tsx finas que buscam dados e compõem features
+  features/
+    produtos/             busca, página do produto, ranking
+    reviews/              feed, review, publicar review
+    antes-do-envio/       peças no armazém, opiniões GL/RL
+    comunidade/           curtidas, selos, perfis
+    perguntas/
+    planos/               plano, pontos, desbloqueio
+      (cada feature)  components/  hooks/  regras/ (funções puras)  dados/ (acesso a dados da feature)  tipos.ts
+  shared/
+    ui/                   componentes genéricos (Botao, Etiqueta, Cartao, Galeria, Campo…)
+    lib/                  formatação, utilitários sem regra de negócio
+  dados/                  camada de acesso a dados: interfaces de repositório + implementação de exemplo hoje, da API amanhã
+```
+
+### Regras
+1. **Dependência em um só sentido:** `shared` → `features` → `app`. `shared` não conhece features; uma feature não importa outra (se duas precisam conversar, quem compõe é o `app` ou o dado sobe para `shared`). Garantir com regra de ESLint.
+2. **Um componente por arquivo**, nome do arquivo igual ao do componente. Arquivos com mais de ~150 linhas são sinal de que algo precisa ser dividido.
+3. **Página fina:** `page.tsx` busca os dados e monta a tela com componentes; não tem regra de negócio nem JSX longo.
+4. **Regra de negócio em funções puras** (`regras/`), sem React, testáveis e fáceis de portar para Kotlin.
+5. **Inversão de dependência (SOLID D):** telas e features dependem de interfaces de repositório (`ProdutoRepositorio`, `ReviewRepositorio`…), não de `dados.ts`. Hoje a implementação usa os dados de exemplo; depois, a API em Ktor, sem mexer nas telas.
+6. **Responsabilidade única (SOLID S):** cada arquivo faz uma coisa: um componente, um hook, um conjunto de regras de um assunto, um repositório.
+7. **DRY:** padrões repetidos (chips, botões, cartões, campos de formulário, listas com filtro) viram componentes em `shared/ui`. Antes de criar, procurar se já existe.
+8. **Componentes de servidor por padrão;** `"use client"` só na menor parte que precisa de estado ou clique.
+9. **Sem barrel files** (`index.ts` reexportando tudo): importar o arquivo direto.
+10. **Estado do cliente isolado:** o estado da demonstração é dividido por assunto (pontos, curtidas, medidas…), com ações pequenas, em vez de um único store gigante.
+
+### Arquitetura alvo do backend (Ktor)
+```
+backend/src/main/kotlin/
+  Application.kt          monta dependências e instala módulos
+  plugins/                serialização, autenticação, CORS, erros
+  produto/  review/  antesdoenvio/  comunidade/  pergunta/   (uma pasta por feature)
+    dominio/              modelos, regras e interfaces de repositório (sem Ktor, sem banco)
+    dados/                implementação dos repositórios (Exposed)
+    rotas/                rotas HTTP e DTOs
+  compartilhado/          leitor de links, formatação, utilitários
+```
+Injeção de dependência pelas funções de módulo, sem framework no começo; Koin se a quantidade de dependências crescer.
+
+---
+
 ## 2. O problema e a ideia
 
 Pessoas que importam produtos da China (direto com a loja, por catálogo, ou por agentes como a CSSBuy) gravam vídeos, tiram fotos e escrevem relatos quando recebem os produtos. Isso acontece em comunidades de WhatsApp e Discord, e tem dois problemas:
