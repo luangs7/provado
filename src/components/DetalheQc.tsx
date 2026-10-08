@@ -1,12 +1,15 @@
-// Tela de um QC. Usada tanto para os QCs do catálogo (renderizada no servidor)
-// quanto para os que você postou (renderizada no navegador).
+// Tela de uma peça no armazém (fotos de conferência antes do envio).
+// Usada tanto para as peças do catálogo (renderizada no servidor)
+// quanto para as que você postou (renderizada no navegador).
 
 import Link from "next/link";
 import ArteProduto from "./ArteProduto";
 import Carimbo from "./Carimbo";
 import { NOMES_DECISAO } from "./Cartoes";
+import Galeria from "./Galeria";
+import Opinioes from "./Opinioes";
 import VotacaoQc from "./VotacaoQc";
-import { buscarLoja, produtosDaLoja, qcsDo } from "@/lib/dados";
+import { buscarLoja, opinioesDo, produtosDaLoja, qcsDo } from "@/lib/dados";
 import { taxaRl, vereditoDoQc } from "@/lib/calculos";
 import { comoComprou, formatarData, formatarPorcentagem, plural } from "@/lib/formato";
 import type { Produto, Qc } from "@/lib/tipos";
@@ -21,17 +24,21 @@ export default function DetalheQc({ qc, produto, meu = false }: { qc: Qc; produt
   return (
     <div className="flex flex-col gap-10">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
-        <div className="grid grid-cols-2 gap-2 self-start">
-          {qc.fotos.map((f, i) => (
-            <ArteProduto key={i} categoria={produto?.categoria ?? "camisetas"} cor={produto?.cor ?? "#9aa6b8"} foto={f} legenda />
-          ))}
+        <div className="self-start">
+          <Galeria
+            fotos={qc.fotos}
+            categoria={produto?.categoria ?? "camisetas"}
+            cor={produto?.cor ?? "#9aa6b8"}
+            formato="grade"
+            titulo="Fotos do armazém"
+          />
         </div>
 
         <div className="flex min-w-0 flex-col gap-6">
           <div className="flex flex-col gap-2">
             {qc.decisao === "aguardando" ? (
               <span className="self-start rounded bg-fita px-2 py-0.5 text-sm font-semibold text-fita-tinta">
-                No armazém, esperando votos
+                No armazém, esperando opiniões
               </span>
             ) : (
               <span className="self-start text-sm font-semibold text-apagado">{NOMES_DECISAO[qc.decisao]}</span>
@@ -46,7 +53,7 @@ export default function DetalheQc({ qc, produto, meu = false }: { qc: Qc; produt
               )}
             </h1>
             <p className="text-apagado">
-              QC de <span className="font-semibold text-tinta">{meu ? "Você" : qc.autor}</span>, {formatarData(qc.data)}.
+              Peça de <span className="font-semibold text-tinta">{meu ? "Você" : qc.autor}</span>, fotos de {formatarData(qc.data)}.
               Tamanho {qc.tamanho}, {comoComprou(qc.canal)}.
             </p>
             {qc.link && !produto && <p className="break-all text-sm text-apagado">{qc.link}</p>}
@@ -80,6 +87,11 @@ export default function DetalheQc({ qc, produto, meu = false }: { qc: Qc; produt
         </div>
       </div>
 
+      <section className="flex max-w-3xl flex-col gap-4">
+        <h2 className="text-2xl font-bold">Opiniões da comunidade</h2>
+        <Opinioes qcId={qc.id} opinioes={opinioesDo(qc.id)} />
+      </section>
+
       {produto && outros.length > 0 && (
         <section className="flex flex-col gap-4">
           <h2 className="text-2xl font-bold">Compare com outras unidades deste produto</h2>
@@ -92,7 +104,7 @@ export default function DetalheQc({ qc, produto, meu = false }: { qc: Qc; produt
                     <ArteProduto categoria={produto.categoria} cor={produto.cor} foto={o.fotos[0]} />
                     <span className="absolute right-2 top-2">
                       {o.decisao === "aguardando" ? (
-                        <span className="rounded bg-fita px-1.5 py-0.5 text-xs font-semibold text-fita-tinta">Votando</span>
+                        <span className="rounded bg-fita px-1.5 py-0.5 text-xs font-semibold text-fita-tinta">Em aberto</span>
                       ) : (
                         v && <Carimbo veredito={v} tamanho="p" />
                       )}

@@ -1,7 +1,8 @@
 "use client";
 
-// Votação GL/RL de um QC. Quem votou RL marca o motivo, que vale mais pontos
-// e ajuda o comprador a pedir a troca ao agente.
+// Opinião sobre uma peça no armazém: GL (pode enviar) ou RL (melhor trocar).
+// Quem marca o motivo ou escreve um comentário ganha mais pontos, e o comentário
+// aparece na lista de opiniões para a comunidade curtir.
 
 import Link from "next/link";
 import { useState } from "react";
@@ -18,6 +19,7 @@ export default function VotacaoQc({ qc, meu = false }: { qc: Qc; meu?: boolean }
   const [escolha, setEscolha] = useState<Veredito | null>(null);
   const [motivos, setMotivos] = useState<MotivoRl[]>([]);
   const [ganhou, setGanhou] = useState(0);
+  const [comentario, setComentario] = useState("");
 
   // O placar já conta o seu voto
   const comVoto: Qc = meuVoto
@@ -37,7 +39,7 @@ export default function VotacaoQc({ qc, meu = false }: { qc: Qc; meu?: boolean }
   if (qc.decisao !== "aguardando") {
     return (
       <div className="flex flex-col gap-3">
-        <p className="font-semibold">Votação encerrada: {NOMES_DECISAO[qc.decisao].toLowerCase()}.</p>
+        <p className="font-semibold">Opiniões encerradas: {NOMES_DECISAO[qc.decisao].toLowerCase()}.</p>
         <PlacarQc qc={comVoto} />
         <Motivos qc={comVoto} />
       </div>
@@ -50,9 +52,9 @@ export default function VotacaoQc({ qc, meu = false }: { qc: Qc; meu?: boolean }
         <div className="flex items-center gap-4">
           <Carimbo veredito={meuVoto.veredito} tamanho="g" entrada={ganhou > 0} />
           <div>
-            <p className="font-semibold">Seu voto foi registrado.</p>
+            <p className="font-semibold">Sua opinião foi registrada.</p>
             <p className="text-sm text-apagado" role="status">
-              {ganhou > 0 ? `+${ganhou} pontos.` : "Você já votou neste QC."}
+              {ganhou > 0 ? `+${ganhou} pontos.` : "Você já deu sua opinião sobre esta peça."}
               {meuVoto.motivos.length > 0 && ` Motivo: ${meuVoto.motivos.join(", ").toLowerCase()}.`}
             </p>
           </div>
@@ -63,7 +65,7 @@ export default function VotacaoQc({ qc, meu = false }: { qc: Qc; meu?: boolean }
     );
   }
 
-  const pontosDoVoto = motivos.length ? PONTOS.votoComMotivo : PONTOS.votoSimples;
+  const pontosDoVoto = motivos.length || comentario.trim() ? PONTOS.votoComMotivo : PONTOS.votoSimples;
   const alternar = (m: MotivoRl) =>
     setMotivos(motivos.includes(m) ? motivos.filter((x) => x !== m) : [...motivos, m]);
 
@@ -77,7 +79,7 @@ export default function VotacaoQc({ qc, meu = false }: { qc: Qc; meu?: boolean }
         <BotaoVeredito veredito="RL" ativo={escolha === "RL"} onClick={() => setEscolha("RL")} legenda="Sinal vermelho, melhor trocar" />
       </div>
       <p className="text-sm text-apagado">
-        GL e RL vêm de Green Light e Red Light, como a comunidade chama a aprovação e a reprovação do QC.{" "}
+        GL e RL são de Green Light e Red Light, sinal verde e sinal vermelho.{" "}
         <Link href="/ajuda#gl" className="font-semibold text-cobalto hover:underline">
           Saiba mais
         </Link>
@@ -85,7 +87,7 @@ export default function VotacaoQc({ qc, meu = false }: { qc: Qc; meu?: boolean }
 
       {escolha === "RL" && (
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 text-sm text-apagado">O que está errado? Marcar o motivo vale mais pontos.</legend>
+          <legend className="mb-2 text-sm text-apagado">O que está errado? Marcar o motivo ajuda quem comprou a pedir a troca.</legend>
           <div className="flex flex-wrap gap-2">
             {MOTIVOS_RL.map((m) => (
               <label
@@ -103,12 +105,29 @@ export default function VotacaoQc({ qc, meu = false }: { qc: Qc; meu?: boolean }
       )}
 
       {escolha && (
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor={`comentario-${qc.id}`} className="text-sm font-semibold">
+            Comentário (opcional)
+          </label>
+          <textarea
+            id={`comentario-${qc.id}`}
+            rows={2}
+            value={comentario}
+            onChange={(e) => setComentario(e.target.value)}
+            placeholder={escolha === "RL" ? "Ex.: a costura do símbolo está diferente das outras fotos" : "Ex.: costura reta e cor igual ao anúncio"}
+            className="rounded-md border border-linha px-3 py-2"
+          />
+          <p className="text-xs text-apagado">Comentários aparecem na lista de opiniões e podem receber curtidas.</p>
+        </div>
+      )}
+
+      {escolha && (
         <button
           type="button"
-          onClick={() => setGanhou(votar(qc.id, escolha, motivos))}
+          onClick={() => setGanhou(votar(qc.id, escolha, motivos, comentario.trim()))}
           className="rounded-md bg-tinta px-4 py-2.5 font-semibold text-cartao"
         >
-          Confirmar voto {escolha} (+{pontosDoVoto} {pontosDoVoto === 1 ? "ponto" : "pontos"})
+          Enviar opinião {escolha} (+{pontosDoVoto} {pontosDoVoto === 1 ? "ponto" : "pontos"})
         </button>
       )}
     </div>
@@ -126,7 +145,7 @@ function Motivos({ qc }: { qc: Qc }) {
   if (!lista.length) return null;
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-sm text-apagado">Motivos de quem votou RL (melhor trocar)</p>
+      <p className="text-sm text-apagado">Motivos de quem achou melhor trocar</p>
       <ul className="flex flex-wrap gap-2 text-sm">
         {lista.map((m) => (
           <li key={m.motivo} className="rounded-full bg-rl-claro px-3 py-1 text-rl">
@@ -167,7 +186,7 @@ function DecisaoDoDono({ qc }: { qc: Qc }) {
     <div className="flex flex-col gap-4">
       <PlacarQc qc={qc} />
       <p className="text-sm text-apagado">
-        Este QC é seu. Quando a comunidade votar, registre o que você decidiu.
+        Esta peça é sua. Depois das opiniões, registre o que você decidiu.
       </p>
       <div className="flex flex-wrap gap-2">
         {opcoes.map((o) => (

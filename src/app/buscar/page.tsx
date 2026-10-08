@@ -27,6 +27,9 @@ async function Resultado({ searchParams }: { searchParams: PageProps<"/buscar">[
     if (produto) redirect(`/produto/${produto.id}`);
   }
 
+  // Texto que não parece link vira busca de produtos
+  if (!lido && texto && !/[./]/.test(texto)) redirect(`/produtos?q=${encodeURIComponent(texto)}`);
+
   if (!lido) {
     return (
       <div className="flex max-w-2xl flex-col gap-5">
@@ -62,8 +65,8 @@ async function Resultado({ searchParams }: { searchParams: PageProps<"/buscar">[
           href={`/qc/novo?link=${paraLink}`}
           className="flex flex-col gap-1 rounded-lg border border-linha bg-cartao p-4 hover:border-tinta"
         >
-          <span className="font-semibold">Postar fotos de QC</span>
-          <span className="text-sm text-apagado">Está no armazém do agente? A comunidade avalia as fotos antes do envio.</span>
+          <span className="font-semibold">Mostrar a peça antes do envio</span>
+          <span className="text-sm text-apagado">Está no armazém do agente? A comunidade diz se pode enviar.</span>
         </Link>
       </div>
       <BuscaLink />

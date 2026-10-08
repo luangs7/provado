@@ -1,35 +1,46 @@
 import Link from "next/link";
-import BuscaLink from "@/components/BuscaLink";
 import BoasVindas from "@/components/BoasVindas";
-import Termo from "@/components/Termo";
+import BuscaLink from "@/components/BuscaLink";
 import { CartaoQc, CartaoReview } from "@/components/Cartoes";
-import { buscarProduto, lojas, produtosDaLoja, qcs, qcsDo, reviews } from "@/lib/dados";
+import { SeloChip } from "@/components/Selos";
+import { AUTORES, buscarProduto, lojas, produtosDaLoja, qcs, qcsDo, reviews } from "@/lib/dados";
 import { taxaRl } from "@/lib/calculos";
 import { formatarNota, formatarPorcentagem, plural } from "@/lib/formato";
-import { ranking } from "@/lib/resumos";
 import { EXEMPLOS_DE_LINK } from "@/lib/link";
-
+import { destaqueDoAutor, estatisticasDe, ordenarPorDestaque, selosDoAutor } from "@/lib/pessoas";
+import { ranking } from "@/lib/resumos";
 
 export default function Inicio() {
-  const noArmazem = qcs.filter((q) => q.decisao === "aguardando").slice(0, 4);
+  // Reviews em alta: as dos últimos 60 dias, com destaque para quem tem selo de avaliador
+  const recentes = reviews.filter((r) => Date.parse(r.data) > Date.parse("2026-08-08"));
+  const emAlta = ordenarPorDestaque(recentes).slice(0, 6);
   const top = ranking().slice(0, 5);
-  const recentes = [...reviews].sort((a, b) => b.data.localeCompare(a.data)).slice(0, 3);
+  const avaliadores = AUTORES.filter((a) => destaqueDoAutor(a) >= 2)
+    .sort((a, b) => estatisticasDe(b).curtidasRecebidas - estatisticasDe(a).curtidasRecebidas)
+    .slice(0, 4);
+  const noArmazem = qcs.filter((q) => q.decisao === "aguardando").slice(0, 3);
   const parceiras = lojas.filter((l) => l.parceira);
 
   return (
     <div className="flex flex-col gap-16">
       <section className="flex max-w-3xl flex-col gap-5 pt-4">
         <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
-          Cole o link. Veja como chegou para quem já comprou.
+          Veja como chegou para quem já comprou.
         </h1>
         <p className="max-w-xl text-lg text-apagado">
-          Reviews de produtos importados da China organizadas por produto, com fotos de QC, tamanho pedido e as medidas
-          de quem vestiu.
+          Reviews de produtos importados da China, com fotos reais, o tamanho que cada pessoa pediu e como ficou no corpo
+          dela.
         </p>
         <BuscaLink grande />
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="text-apagado">Testar com:</span>
-          {EXEMPLOS_DE_LINK.map((e) => (
+          <span className="text-apagado">Experimente:</span>
+          <Link href="/produtos?q=jaqueta" className="rounded-full border border-linha bg-cartao px-3 py-1 hover:border-tinta">
+            jaqueta
+          </Link>
+          <Link href="/produtos?q=tênis" className="rounded-full border border-linha bg-cartao px-3 py-1 hover:border-tinta">
+            tênis
+          </Link>
+          {EXEMPLOS_DE_LINK.slice(0, 2).map((e) => (
             <Link
               key={e.link}
               href={`/buscar?link=${encodeURIComponent(e.link)}`}
@@ -43,30 +54,26 @@ export default function Inicio() {
 
       <BoasVindas />
 
-      <div className="grid gap-10 lg:grid-cols-[1fr_24rem]">
-        <section className="flex min-w-0 flex-col gap-4">
-          <div className="flex items-baseline justify-between gap-4">
-            <h2 className="text-2xl font-bold">Peças esperando avaliação</h2>
-            <Link href="/qc" className="text-sm font-semibold text-cobalto hover:underline">
-              Ver o armazém
-            </Link>
-          </div>
-          <p className="-mt-2 text-apagado">
-            Fotos de <Termo id="qc">QC</Termo> tiradas no armazém do agente, antes do envio. Vote{" "}
-            <Termo id="gl">GL</Termo> se a peça está boa ou <Termo id="rl">RL</Termo> se é melhor trocar.
-          </p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {noArmazem.map((qc) => (
-              <CartaoQc key={qc.id} qc={qc} produto={qc.produtoId ? buscarProduto(qc.produtoId) : undefined} />
-            ))}
-          </div>
-        </section>
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-baseline justify-between gap-4">
+          <h2 className="text-3xl font-bold">Reviews em alta</h2>
+          <Link href="/reviews" className="text-sm font-semibold text-cobalto hover:underline">
+            Ver todas as reviews
+          </Link>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {emAlta.map((r) => (
+            <CartaoReview key={r.id} review={r} produto={buscarProduto(r.produtoId)!} comProduto resumida />
+          ))}
+        </div>
+      </section>
 
+      <div className="grid gap-10 lg:grid-cols-2">
         <section className="flex flex-col gap-4">
-          <div className="flex items-baseline justify-between gap-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
             <h2 className="text-2xl font-bold">Mais bem avaliados</h2>
-            <Link href="/ranking" className="whitespace-nowrap text-sm font-semibold text-cobalto hover:underline">
-              Ranking completo
+            <Link href="/produtos" className="whitespace-nowrap text-sm font-semibold text-cobalto hover:underline">
+              Buscar produtos
             </Link>
           </div>
           <ol className="flex flex-col divide-y divide-linha rounded-lg border border-linha bg-cartao">
@@ -76,7 +83,9 @@ export default function Inicio() {
                   <span className="w-5 font-display text-lg font-bold text-apagado tabular-nums">{i + 1}</span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-medium">{item.produto.titulo}</span>
-                    <span className="text-sm text-apagado">{plural(item.totalReviews, "review", "reviews")}</span>
+                    <span className="text-sm text-apagado">
+                      {item.produto.marca}, {plural(item.totalReviews, "review", "reviews")}
+                    </span>
                   </span>
                   <span className="font-display text-lg font-bold tabular-nums">{formatarNota(item.pontuacao)}</span>
                 </Link>
@@ -84,7 +93,52 @@ export default function Inicio() {
             ))}
           </ol>
         </section>
+
+        <section className="flex flex-col gap-4">
+          <h2 className="text-2xl font-bold">Avaliadores em destaque</h2>
+          <ul className="flex flex-col divide-y divide-linha rounded-lg border border-linha bg-cartao">
+            {avaliadores.map((nome) => {
+              const e = estatisticasDe(nome);
+              return (
+                <li key={nome}>
+                  <Link href={`/usuario/${nome}`} className="flex items-center gap-3 px-4 py-3 hover:bg-papel">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-full bg-tinta font-display font-bold uppercase text-cartao">
+                      {nome[0]}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold">{nome}</span>
+                      <span className="text-sm text-apagado">
+                        {e.reviews} reviews, {e.curtidasRecebidas} curtidas recebidas
+                      </span>
+                    </span>
+                    <SeloChip selo={selosDoAutor(nome)[0]} />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="text-sm text-apagado">
+            Reviews curtidas pela comunidade rendem selos, e quem tem selo aparece primeiro nas listas.
+          </p>
+        </section>
       </div>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-baseline justify-between gap-4">
+          <h2 className="text-2xl font-bold">Antes do envio: peças esperando opinião</h2>
+          <Link href="/qc" className="text-sm font-semibold text-cobalto hover:underline">
+            Ver todas
+          </Link>
+        </div>
+        <p className="-mt-2 max-w-2xl text-apagado">
+          Quem compra por agente recebe fotos da peça no armazém. Diga se está boa para enviar ou se é melhor trocar.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {noArmazem.map((qc) => (
+            <CartaoQc key={qc.id} qc={qc} produto={qc.produtoId ? buscarProduto(qc.produtoId) : undefined} />
+          ))}
+        </div>
+      </section>
 
       <section className="flex flex-col gap-4">
         <h2 className="text-2xl font-bold">Lojas parceiras</h2>
@@ -104,27 +158,10 @@ export default function Inicio() {
                 </div>
                 <p className="text-sm text-apagado">
                   {plural(doLoja.length, "produto avaliado", "produtos avaliados")}
-                  {rl && `, ${formatarPorcentagem(rl.taxa)} das peças reprovadas no QC`}
+                  {rl && `, ${formatarPorcentagem(rl.taxa)} das peças reprovadas antes do envio`}
                 </p>
                 <p className="text-sm">Cupom de 8% para quem chega pelo Provado.</p>
               </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="flex flex-col gap-4">
-        <h2 className="text-2xl font-bold">Reviews recentes</h2>
-        <div className="grid gap-4 lg:grid-cols-3">
-          {recentes.map((r) => {
-            const produto = buscarProduto(r.produtoId)!;
-            return (
-              <div key={r.id} className="flex flex-col gap-2">
-                <Link href={`/produto/${produto.id}`} className="text-sm font-semibold text-cobalto hover:underline">
-                  {produto.titulo}
-                </Link>
-                <CartaoReview review={r} produto={produto} />
-              </div>
             );
           })}
         </div>

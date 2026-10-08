@@ -6,6 +6,9 @@ import { CartaoReview, NOMES_DECISAO } from "./Cartoes";
 import { buscarProduto } from "@/lib/dados";
 import { formatarData } from "@/lib/formato";
 import { useDemo } from "@/lib/demo";
+import { REGRAS_SELOS, type Estatisticas } from "@/lib/selos";
+import MinhasMedidas from "./MinhasMedidas";
+import { SeloChip } from "./Selos";
 import type { DecisaoQc, Produto } from "@/lib/tipos";
 
 // Etapas do pedido por agente: armazém → enviado → recebido
@@ -16,11 +19,15 @@ export default function PainelPerfil() {
   const totalVotos = Object.keys(demo.votos).length;
   const totalRespostas = Object.values(demo.respostas).flat().length;
 
-  const selos = [
-    { nome: "Primeira review", ganho: demo.reviews.length > 0, como: "Publique uma review" },
-    { nome: "Olho de armazém", ganho: totalVotos >= 5, como: `Vote em 5 QCs (${Math.min(totalVotos, 5)} de 5)` },
-    { nome: "Ajuda quem pergunta", ganho: totalRespostas > 0, como: "Responda uma pergunta" },
-  ];
+  const minhasEstatisticas: Estatisticas = {
+    reviews: demo.reviews.length,
+    completas: demo.reviews.filter((r) => r.fotos.length > 0 && r.altura !== undefined).length,
+    respostas: totalRespostas,
+    opinioes: totalVotos,
+    compras: demo.qcs.length + demo.reviews.filter((r) => !r.qcId).length,
+    curtidasRecebidas: 0,
+    maiorCurtida: 0,
+  };
 
   return (
     <div className="flex flex-col gap-12">
@@ -44,29 +51,46 @@ export default function PainelPerfil() {
       </div>
 
       <section className="flex flex-col gap-3">
+        <h2 className="text-2xl font-bold">Suas medidas</h2>
+        <p className="max-w-2xl text-apagado">
+          Usadas para mostrar o tamanho que serve em você e as reviews de quem tem o corpo parecido. Nas suas reviews,
+          aparecem só em faixas.
+        </p>
+        <MinhasMedidas />
+      </section>
+
+      <section className="flex flex-col gap-3">
         <h2 className="text-2xl font-bold">Selos</h2>
-        <ul className="flex flex-wrap gap-3">
-          {selos.map((s) => (
-            <li
-              key={s.nome}
-              className={`flex flex-col rounded-lg border-2 px-4 py-3 ${s.ganho ? "border-tinta bg-cartao" : "border-dashed border-linha text-apagado"}`}
-            >
-              <span className="font-display text-lg font-bold">{s.nome}</span>
-              <span className="text-sm">{s.ganho ? "Conquistado" : s.como}</span>
-            </li>
-          ))}
+        <p className="max-w-2xl text-apagado">
+          As curtidas que suas reviews e opiniões recebem contam para os selos de avaliador. Quem tem selo aparece primeiro
+          nas listas.
+        </p>
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {REGRAS_SELOS.map((r) => {
+            const ganhou = r.ganhou(minhasEstatisticas);
+            return (
+              <li
+                key={r.id}
+                className={`flex flex-col gap-1.5 rounded-lg border-2 p-4 ${ganhou ? "border-tinta bg-cartao" : "border-dashed border-linha"}`}
+              >
+                <SeloChip selo={r} />
+                <span className="text-sm text-apagado">{r.descricao}</span>
+                <span className="text-sm font-semibold">{ganhou ? "Conquistado" : r.progresso(minhasEstatisticas)}</span>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
       <section className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-2xl font-bold">Seus pedidos no armazém</h2>
+          <h2 className="text-2xl font-bold">Suas peças antes do envio</h2>
           <Link href="/qc/novo" className="text-sm font-semibold text-cobalto hover:underline">
-            Postar QC
+            Mostrar uma peça
           </Link>
         </div>
         {demo.qcs.length === 0 ? (
-          <Vazio>Nenhum QC postado. Quando sua compra chegar no armazém do agente, poste as fotos para a comunidade avaliar antes do envio.</Vazio>
+          <Vazio>Nenhuma peça mostrada. Quando sua compra chegar no armazém do agente, poste as fotos para a comunidade dizer se pode enviar.</Vazio>
         ) : (
           <ul className="flex flex-col divide-y divide-linha rounded-lg border border-linha bg-cartao">
             {demo.qcs.map((qc) => {
@@ -122,7 +146,7 @@ export default function PainelPerfil() {
                   ) : (
                     <p className="text-sm text-apagado">{produto.titulo}. A página do produto é criada com a primeira review.</p>
                   )}
-                  <CartaoReview review={r} produto={produto} />
+                  <CartaoReview review={r} produto={produto} minha />
                 </div>
               );
             })}
@@ -157,6 +181,7 @@ function produtoGenerico(id: string): Produto {
   return {
     id,
     titulo: `Item ${itemId}`,
+    marca: "",
     categoria: "camisetas",
     lojaId: "",
     plataforma: "taobao",

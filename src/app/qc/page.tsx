@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { CartaoQc } from "@/components/Cartoes";
 import QcsLocais from "@/components/QcsLocais";
-import Termo from "@/components/Termo";
 import { buscarProduto, qcs } from "@/lib/dados";
 
-export const metadata = { title: "Armazém" };
+export const metadata = { title: "Antes do envio" };
 
 export default function Armazem() {
   const esperando = qcs.filter((q) => q.decisao === "aguardando");
@@ -15,21 +14,20 @@ export default function Armazem() {
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex max-w-2xl flex-col gap-2">
-            <h1 className="text-4xl font-extrabold">Armazém</h1>
+            <h1 className="text-4xl font-extrabold">Antes do envio</h1>
             <p className="text-lg text-apagado">
-              Compras por agente param no armazém antes do envio. Aqui a comunidade olha as fotos de{" "}
-              <Termo id="qc">QC</Termo> e vota <Termo id="gl">GL</Termo>, sinal verde para enviar, ou{" "}
-              <Termo id="rl">RL</Termo>, sinal vermelho para trocar. Compras feitas direto com a loja não passam por esta
-              etapa.
+              Quem compra por agente recebe fotos da peça no armazém antes de ela vir para o Brasil. Mostre as suas e a
+              comunidade diz se está boa para enviar ou se é melhor trocar. Compras feitas direto com a loja não passam por
+              esta etapa.
             </p>
           </div>
           <Link href="/qc/novo" className="rounded-md bg-cobalto px-4 py-2.5 font-semibold text-white hover:bg-cobalto-escuro">
-            Postar meu QC
+            Mostrar minha peça
           </Link>
         </div>
       </section>
 
-      <QcsLocais titulo="Seus QCs" />
+      <QcsLocais titulo="Suas peças" />
 
       <section className="flex flex-col gap-4">
         <h2 className="text-2xl font-bold">Esperando votos ({esperando.length})</h2>

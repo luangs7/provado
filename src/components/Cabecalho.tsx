@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { recomecar, useDemo } from "@/lib/demo";
 
 const LINKS = [
-  { href: "/qc", rotulo: "Armazém" },
-  { href: "/ranking", rotulo: "Ranking" },
-  { href: "/planos", rotulo: "Planos" },
+  { href: "/reviews", rotulo: "Reviews" },
+  { href: "/produtos", rotulo: "Produtos" },
+  { href: "/qc", rotulo: "Antes do envio" },
   { href: "/ajuda", rotulo: "Ajuda" },
 ];
 
@@ -29,7 +29,7 @@ export default function Cabecalho() {
           Provado
         </Link>
 
-        <nav className="order-3 flex w-full gap-1 sm:order-none sm:w-auto" aria-label="Principal">
+        <nav className="order-3 -mx-1 flex w-full gap-1 overflow-x-auto sm:order-none sm:mx-0 sm:w-auto" aria-label="Principal">
           {LINKS.map((l) => {
             const ativo = caminho.startsWith(l.href);
             return (
@@ -37,7 +37,7 @@ export default function Cabecalho() {
                 key={l.href}
                 href={l.href}
                 aria-current={ativo ? "page" : undefined}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                className={`shrink-0 rounded-md px-3 py-1.5 text-sm font-medium ${
                   ativo ? "bg-cobalto-claro text-cobalto-escuro" : "text-apagado hover:text-tinta"
                 }`}
               >
@@ -49,10 +49,11 @@ export default function Cabecalho() {
 
         <div className="ml-auto flex items-center gap-2">
           <Link
-            href="/qc/novo"
-            className="hidden rounded-md border-2 border-tinta px-3 py-1.5 text-sm font-semibold hover:bg-papel sm:inline-block"
+            href="/review/nova"
+            className="rounded-md bg-cobalto px-3 py-2 text-sm font-semibold text-white hover:bg-cobalto-escuro"
           >
-            Postar QC
+            <span className="sm:hidden">Publicar</span>
+            <span className="hidden sm:inline">Publicar review</span>
           </Link>
           <Link
             href="/perfil"

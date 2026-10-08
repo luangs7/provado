@@ -23,6 +23,7 @@ export type Loja = {
 export type Produto = {
   id: string;
   titulo: string;
+  marca: string; // marcas fictícias no protótipo
   categoria: Categoria;
   lojaId: string;
   plataforma: Plataforma;
@@ -59,8 +60,8 @@ export type Review = {
   texto: string;
   canal: Canal;
   fotos: string[]; // ângulos de exemplo ou imagens enviadas (data URL)
-  util: number;
-  qcId?: string; // quando a review nasceu de um QC
+  curtidas: number;
+  qcId?: string; // quando a review nasceu de uma conferência no armazém
 };
 
 export type Veredito = "GL" | "RL";
@@ -88,6 +89,33 @@ export type Qc = {
   fotos: string[];
   votos: { gl: number; rl: number; motivos: Partial<Record<MotivoRl, number>> };
   decisao: DecisaoQc;
+};
+
+// Opinião escrita sobre as fotos do armazém (o voto GL/RL com comentário)
+export type Opiniao = {
+  id: string;
+  qcId: string;
+  autor: string;
+  veredito: Veredito;
+  motivo?: MotivoRl;
+  texto: string;
+  data: string;
+  curtidas: number;
+};
+
+// Contribuições anteriores ao recorte de exemplo, usadas nos selos
+export type Historico = {
+  reviews: number;
+  completas: number;
+  respostas: number;
+  opinioes: number;
+  compras: number;
+};
+
+export type Usuario = {
+  nome: string;
+  desde: number;
+  historico: Historico;
 };
 
 export type Resposta = {

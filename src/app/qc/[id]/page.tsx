@@ -10,7 +10,7 @@ export async function generateMetadata(props: PageProps<"/qc/[id]">) {
   const { id } = await props.params;
   const qc = buscarQc(id);
   const produto = qc?.produtoId ? buscarProduto(qc.produtoId) : undefined;
-  return { title: produto ? `QC: ${produto.titulo}` : "QC" };
+  return { title: produto ? `Antes do envio: ${produto.titulo}` : "Antes do envio" };
 }
 
 export default async function PaginaQc(props: PageProps<"/qc/[id]">) {

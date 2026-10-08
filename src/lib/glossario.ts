@@ -9,7 +9,7 @@ export const GLOSSARIO: Termo[] = [
     termo: "QC",
     nome: "Quality Check",
     definicao:
-      "Controle de qualidade. São as fotos que o agente tira da sua peça no armazém, antes de mandar para o Brasil. É a chance de conferir costura, cor e medidas antes do envio.",
+      "Conferência antes do envio. São as fotos que o agente tira da sua peça no armazém, antes de mandar para o Brasil. É a chance de conferir costura, cor e medidas.",
   },
   {
     id: "gl",
@@ -26,21 +26,21 @@ export const GLOSSARIO: Termo[] = [
   },
   {
     id: "taxa-rl",
-    termo: "Taxa de RL",
+    termo: "Peças reprovadas",
     definicao:
-      "De todos os QCs já decididos de um produto ou loja, quantos a comunidade reprovou. Quanto menor, menos chance de receber peça com defeito.",
+      "De todas as peças já conferidas antes do envio, quantas a comunidade reprovou. Quanto menor, menos chance de receber peça com defeito.",
   },
   {
     id: "agente",
     termo: "Agente",
     definicao:
-      "Empresa que compra na China por você, como a CSSBuy. Ela recebe o produto no armazém, tira as fotos de QC e envia para o Brasil.",
+      "Empresa que compra na China por você, como a CSSBuy. Ela recebe o produto no armazém, tira fotos para você conferir e envia para o Brasil.",
   },
   {
     id: "armazem",
     termo: "Armazém",
     definicao:
-      "Onde o agente guarda a peça até você decidir enviar. Compras feitas direto com a loja não passam pelo armazém e não têm fotos de QC.",
+      "Onde o agente guarda a peça até você decidir enviar. Compras feitas direto com a loja não passam pelo armazém e não têm essas fotos.",
   },
   {
     id: "caimento",
@@ -54,10 +54,16 @@ export const GLOSSARIO: Termo[] = [
       "Reviews de quem tem até 6 cm de altura e 10 kg de diferença de você. As medidas aparecem só em faixas, nunca o valor exato.",
   },
   {
+    id: "selos",
+    termo: "Selos",
+    definicao:
+      "Reconhecem quem contribui. Os de avaliador (bronze, prata e ouro) vêm das curtidas que uma review ou opinião recebe, e fazem as próximas contribuições da pessoa aparecerem primeiro.",
+  },
+  {
     id: "pontos",
     termo: "Pontos",
     definicao:
-      "Você ganha publicando reviews, respondendo perguntas e votando em QCs. Com 100 pontos, libera todas as reviews de um produto sem pagar.",
+      "Você ganha publicando reviews, respondendo perguntas, opinando sobre peças antes do envio e recebendo curtidas. Com 100 pontos, libera todas as reviews de um produto sem pagar.",
   },
   {
     id: "plus",

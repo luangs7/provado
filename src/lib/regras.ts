@@ -6,6 +6,7 @@ export const PONTOS = {
   resposta: 10,
   votoComMotivo: 3,
   votoSimples: 1,
+  curtidaRecebida: 2, // cada curtida que sua review ou opinião recebe
 };
 
 export const CUSTO_DESBLOQUEIO = 100;

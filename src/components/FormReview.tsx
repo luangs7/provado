@@ -69,7 +69,7 @@ export default function FormReview({ produto: produtoInicial, link: linkInicial 
       texto: texto.trim(),
       canal,
       fotos: todasFotos,
-      util: 0,
+      curtidas: 0,
       qcId,
     });
     if (qcId) mudarDecisao(qcId, "recebido");
@@ -83,7 +83,7 @@ export default function FormReview({ produto: produtoInicial, link: linkInicial 
           <ArteProduto categoria={produto.categoria} cor={produto.cor} className="w-16 shrink-0" />
           <div>
             <p className="font-semibold">{produto.titulo}</p>
-            {qc && <p className="text-sm text-apagado">Esta review continua o seu QC no armazém.</p>}
+            {qc && <p className="text-sm text-apagado">Esta review continua a peça que você mostrou antes do envio.</p>}
           </div>
         </div>
       ) : (

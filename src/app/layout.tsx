@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: "%s | Provado",
   },
   description:
-    "Reviews de produtos importados da China organizadas por produto: fotos de QC, tamanho por corpo parecido e notas da comunidade.",
+    "Reviews de produtos importados da China: fotos reais, tamanho por corpo parecido e notas de quem já recebeu.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -27,8 +27,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/planos" className="hover:text-tinta">
               Planos
             </Link>
-            <Link href="/ranking" className="hover:text-tinta">
-              Ranking
+            <Link href="/produtos" className="hover:text-tinta">
+              Produtos
             </Link>
             <span>Patrocínio nunca altera notas, reviews ou ranking.</span>
           </div>

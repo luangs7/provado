@@ -76,6 +76,17 @@ export const corpoParecido = (r: Review, altura: number, peso: number) =>
   Math.abs(r.altura - altura) <= 6 &&
   Math.abs(r.peso - peso) <= 10;
 
+// "Serve em mim": entre as pessoas de corpo parecido, o tamanho que mais ficou certo
+export function tamanhoQueServe(lista: Review[], altura: number, peso: number) {
+  const parecidas = lista.filter((r) => corpoParecido(r, altura, peso));
+  const certas = parecidas.filter((r) => r.caimento === "certo");
+  if (!certas.length) return null;
+  const contagem = new Map<string, number>();
+  for (const r of certas) contagem.set(r.tamanho, (contagem.get(r.tamanho) ?? 0) + 1);
+  const [tamanho, quantos] = [...contagem.entries()].sort((a, b) => b[1] - a[1])[0];
+  return { tamanho, quantos, parecidas: parecidas.length };
+}
+
 // ---------- QC ----------
 
 // Veredito da comunidade. Antes de 3 votos ainda não há veredito.

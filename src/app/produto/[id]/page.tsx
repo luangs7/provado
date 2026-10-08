@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Abas from "@/components/Abas";
-import ArteProduto from "@/components/ArteProduto";
 import { BarrasNotas, CartaoQc } from "@/components/Cartoes";
+import Galeria from "@/components/Galeria";
 import QcsLocais from "@/components/QcsLocais";
 import SecaoPerguntas from "@/components/SecaoPerguntas";
 import SecaoReviews from "@/components/SecaoReviews";
+import ServeEmMim from "@/components/ServeEmMim";
 import Termo from "@/components/Termo";
 import { ANGULOS, CATEGORIAS, buscarProduto, perguntasDo, produtos, qcsDo, reviewsDo } from "@/lib/dados";
 import { mediaPorCriterio, recomendacaoTamanho, resumoCaimento } from "@/lib/calculos";
@@ -21,7 +22,7 @@ export function generateStaticParams() {
 export async function generateMetadata(props: PageProps<"/produto/[id]">) {
   const { id } = await props.params;
   const produto = buscarProduto(id);
-  return { title: produto ? `${produto.titulo}: reviews e QC` : "Produto não encontrado" };
+  return { title: produto ? `${produto.titulo}: reviews` : "Produto não encontrado" };
 }
 
 export default async function PaginaProduto(props: PageProps<"/produto/[id]">) {
@@ -39,23 +40,17 @@ export default async function PaginaProduto(props: PageProps<"/produto/[id]">) {
   return (
     <div className="flex flex-col gap-10">
       <nav className="text-sm text-apagado" aria-label="Você está em">
-        <Link href={`/ranking?categoria=${produto.categoria}`} className="hover:text-tinta hover:underline">
+        <Link href={`/produtos?q=${encodeURIComponent(CATEGORIAS[produto.categoria])}`} className="hover:text-tinta hover:underline">
           {CATEGORIAS[produto.categoria]}
         </Link>
       </nav>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,26rem)_1fr]">
-        <div className="flex flex-col gap-2">
-          <ArteProduto categoria={produto.categoria} cor={produto.cor} />
-          <div className="grid grid-cols-4 gap-2">
-            {ANGULOS[produto.categoria].map((a) => (
-              <ArteProduto key={a} categoria={produto.categoria} cor={produto.cor} foto={a} legenda />
-            ))}
-          </div>
-        </div>
+        <Galeria fotos={ANGULOS[produto.categoria]} categoria={produto.categoria} cor={produto.cor} formato="produto" titulo={produto.titulo} />
 
         <div className="flex min-w-0 flex-col gap-6">
           <div className="flex flex-col gap-2">
+            <p className="font-semibold text-apagado">{produto.marca}</p>
             <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">{produto.titulo}</h1>
             <p className="text-apagado">
               <Link href={`/loja/${loja.id}`} className="font-semibold text-tinta hover:underline">
@@ -77,9 +72,11 @@ export default async function PaginaProduto(props: PageProps<"/produto/[id]">) {
               {rl && (
                 <span className="mt-3 text-sm">
                   <span className="font-semibold">
-                    <Termo id="taxa-rl">{formatarPorcentagem(rl.taxa)} reprovados</Termo>
+                    <Termo id="taxa-rl">{formatarPorcentagem(rl.taxa)} reprovadas</Termo>
                   </span>
-                  <span className="block text-apagado">em {plural(rl.total, "QC revisado", "QCs revisados")}</span>
+                  <span className="block text-apagado">
+                    antes do envio, em {plural(rl.total, "peça conferida", "peças conferidas")}
+                  </span>
                 </span>
               )}
             </div>
@@ -97,12 +94,14 @@ export default async function PaginaProduto(props: PageProps<"/produto/[id]">) {
             </div>
           )}
 
+          {!tamanhoUnico && <ServeEmMim reviews={reviews} />}
+
           <div className="flex flex-wrap gap-2">
             <Link href={`/review/nova?produto=${produto.id}`} className="rounded-md bg-cobalto px-4 py-2.5 font-semibold text-white hover:bg-cobalto-escuro">
               Publicar review
             </Link>
             <Link href={`/qc/novo?produto=${produto.id}`} className="rounded-md border-2 border-tinta px-4 py-2 font-semibold hover:bg-cartao">
-              Postar fotos de QC
+              Pedir opinião antes do envio
             </Link>
           </div>
         </div>
@@ -117,17 +116,17 @@ export default async function PaginaProduto(props: PageProps<"/produto/[id]">) {
           },
           {
             id: "qc",
-            rotulo: `Fotos de QC (${qcs.length})`,
+            rotulo: `Antes do envio (${qcs.length})`,
             conteudo: (
               <div className="flex flex-col gap-6">
                 <p className="max-w-2xl text-apagado">
-                  Fotos tiradas pelo agente no armazém, antes do envio. Cada QC recebe votos <Termo id="gl">GL</Termo>{" "}
-                  (pode enviar) ou <Termo id="rl">RL</Termo> (melhor trocar). Compare com a sua unidade antes de decidir.
+                  Fotos que o agente tirou de outras unidades deste produto no armazém, antes de enviar. Veja o que a
+                  comunidade aprovou e reprovou e compare com a sua peça.
                 </p>
-                <QcsLocais produtoId={produto.id} titulo="Seus QCs deste produto" />
+                <QcsLocais produtoId={produto.id} titulo="Suas peças deste produto" />
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {qcs.map((qc) => (
-                    <CartaoQc key={qc.id} qc={qc} produto={produto} titulo={`QC de ${qc.autor}`} />
+                    <CartaoQc key={qc.id} qc={qc} produto={produto} titulo={`Peça de ${qc.autor}`} />
                   ))}
                 </div>
               </div>

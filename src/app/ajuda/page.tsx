@@ -34,7 +34,7 @@ export default function Ajuda() {
 
       <section className="flex flex-col gap-5" aria-labelledby="titulo-qc">
         <h2 id="titulo-qc" className="text-2xl font-bold">
-          GL e RL: a avaliação do QC
+          GL e RL: a opinião antes do envio
         </h2>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="flex items-center gap-5 rounded-lg border-2 border-gl bg-gl-claro p-5">
@@ -53,8 +53,8 @@ export default function Ajuda() {
           </div>
         </div>
         <p className="max-w-2xl text-apagado">
-          São termos que as comunidades de importação já usam. Aqui eles viram votos: cada pessoa marca GL ou RL e, no caso
-          de RL, diz o motivo. Com o tempo, isso mostra quais lojas costumam mandar peças com problema.
+          São termos que as comunidades de importação já usam. Aqui eles viram opiniões: cada pessoa marca GL ou RL e, no
+          caso de RL, diz o motivo. Com o tempo, isso mostra quais lojas costumam mandar peças com problema.
         </p>
       </section>
 

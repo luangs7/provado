@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { CartaoReview } from "./Cartoes";
 import { corpoParecido } from "@/lib/calculos";
+import { ordenarPorDestaque } from "@/lib/pessoas";
 import { CUSTO_DESBLOQUEIO, LIMITE_GRATUITO, desbloquear, mudarPlano, useDemo, veTudo } from "@/lib/demo";
 import type { Caimento, Produto, Review } from "@/lib/tipos";
 
@@ -15,7 +16,7 @@ const SEM_FILTRO: Filtros = { altura: "", peso: "", tamanho: "", caimento: "", c
 export default function SecaoReviews({ produto, reviews }: { produto: Produto; reviews: Review[] }) {
   const demo = useDemo();
   const [filtros, setFiltros] = useState<Filtros>(SEM_FILTRO);
-  const [ordem, setOrdem] = useState<"recentes" | "uteis">("recentes");
+  const [ordem, setOrdem] = useState<"destaque" | "recentes" | "curtidas">("destaque");
 
   const plus = demo.plano === "pago";
   const liberado = veTudo(demo, produto.id);
@@ -31,9 +32,10 @@ export default function SecaoReviews({ produto, reviews }: { produto: Produto; r
     .filter((r) => !plus || !filtros.tamanho || r.tamanho === filtros.tamanho)
     .filter((r) => !plus || !filtros.caimento || r.caimento === filtros.caimento)
     .filter((r) => !plus || !filtros.canal || r.canal === filtros.canal)
-    .sort((a, b) => (ordem === "uteis" ? b.util - a.util : b.data.localeCompare(a.data)));
+    .sort((a, b) => (ordem === "curtidas" ? b.curtidas - a.curtidas : b.data.localeCompare(a.data)));
 
-  const visiveis = liberado ? filtradas : filtradas.slice(0, LIMITE_GRATUITO);
+  const ordenadas = ordem === "destaque" ? ordenarPorDestaque(filtradas) : filtradas;
+  const visiveis = liberado ? ordenadas : ordenadas.slice(0, LIMITE_GRATUITO);
   const escondidas = filtradas.length - visiveis.length;
   const mudar = (campo: keyof Filtros, valor: string) => setFiltros({ ...filtros, [campo]: valor });
 
@@ -107,15 +109,16 @@ export default function SecaoReviews({ produto, reviews }: { produto: Produto; r
         <label className="flex items-center gap-2 text-sm">
           Ordenar por
           <select id="ordem-reviews" value={ordem} onChange={(e) => setOrdem(e.target.value as typeof ordem)} className="rounded-md border border-linha bg-cartao px-2 py-1">
+            <option value="destaque">Em destaque</option>
             <option value="recentes">Mais recentes</option>
-            <option value="uteis">Mais úteis</option>
+            <option value="curtidas">Mais curtidas</option>
           </select>
         </label>
       </div>
 
       <div className="flex flex-col gap-3">
         {minhas.map((r) => (
-          <CartaoReview key={r.id} review={r} produto={produto} destaque />
+          <CartaoReview key={r.id} review={r} produto={produto} minha />
         ))}
         {visiveis.map((r) => (
           <CartaoReview key={r.id} review={r} produto={produto} />
@@ -141,14 +144,14 @@ function Bloqueio({ produtoId, escondidas, pontos }: { produtoId: string; escond
       <div className="flex flex-col gap-1">
         <h3 className="text-xl font-bold">Mais {escondidas} reviews deste produto</h3>
         <p className="text-apagado">
-          O plano gratuito mostra até {LIMITE_GRATUITO} reviews por produto. Quem publica reviews e vota em QCs ganha
+          O plano gratuito mostra até {LIMITE_GRATUITO} reviews por produto. Quem publica reviews e dá opinião sobre peças antes do envio ganha
           pontos para ver o resto sem pagar.
         </p>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row">
         <button
           type="button"
-          onClick={() => (desbloquear(produtoId) ? setErro("") : setErro(`Faltam ${CUSTO_DESBLOQUEIO - pontos} pontos. Publique uma review ou vote em QCs para ganhar.`))}
+          onClick={() => (desbloquear(produtoId) ? setErro("") : setErro(`Faltam ${CUSTO_DESBLOQUEIO - pontos} pontos. Publique uma review ou dê opinião sobre peças antes do envio para ganhar.`))}
           className={`rounded-md px-4 py-2 font-semibold ${podePagar ? "bg-cobalto text-white hover:bg-cobalto-escuro" : "border border-linha text-apagado"}`}
         >
           Desbloquear com {CUSTO_DESBLOQUEIO} pontos

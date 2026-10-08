@@ -7,7 +7,7 @@
 
 import { useSyncExternalStore } from "react";
 import { CUSTO_DESBLOQUEIO, PONTOS } from "./regras";
-import type { DecisaoQc, MotivoRl, Pergunta, Qc, Review, Veredito } from "./tipos";
+import type { DecisaoQc, MotivoRl, Opiniao, Pergunta, Qc, Review, Veredito } from "./tipos";
 
 export { CUSTO_DESBLOQUEIO, LIMITE_GRATUITO, PONTOS } from "./regras";
 
@@ -24,6 +24,9 @@ export type EstadoDemo = {
   respostas: Record<string, { texto: string; data: string }[]>; // por id de pergunta
   desbloqueados: string[]; // produtos liberados com pontos
   tutorialVisto: boolean;
+  curtidas: string[]; // ids de reviews e opiniões que você curtiu
+  opinioes: Opiniao[]; // seus votos com comentário
+  medidas: { altura: number; peso: number } | null;
 };
 
 const INICIAL: EstadoDemo = {
@@ -37,9 +40,12 @@ const INICIAL: EstadoDemo = {
   respostas: {},
   desbloqueados: [],
   tutorialVisto: false,
+  curtidas: [],
+  opinioes: [],
+  medidas: null,
 };
 
-const CHAVE = "provado-demo-v1";
+const CHAVE = "provado-demo-v2";
 let estado: EstadoDemo | null = null;
 const ouvintes = new Set<() => void>();
 
@@ -93,16 +99,31 @@ function ganhar(atual: EstadoDemo, pontos: number, descricao: string): Partial<E
 
 // ---------- Ações ----------
 
-export function votar(qcId: string, veredito: Veredito, motivos: MotivoRl[]) {
+export function votar(qcId: string, veredito: Veredito, motivos: MotivoRl[], comentario = "") {
   const atual = ler();
   if (atual.votos[qcId]) return 0;
-  const pontos = motivos.length ? PONTOS.votoComMotivo : PONTOS.votoSimples;
+  const pontos = motivos.length || comentario ? PONTOS.votoComMotivo : PONTOS.votoSimples;
+  const opiniao: Opiniao | null = comentario
+    ? { id: novoId("opiniao"), qcId, autor: "Você", veredito, motivo: motivos[0], texto: comentario, data: agora(), curtidas: 0 }
+    : null;
   gravar({
     ...atual,
-    ...ganhar(atual, pontos, `Voto ${veredito} em um QC`),
+    ...ganhar(atual, pontos, "Opinião sobre uma peça antes do envio"),
     votos: { ...atual.votos, [qcId]: { veredito, motivos } },
+    opinioes: opiniao ? [opiniao, ...atual.opinioes] : atual.opinioes,
   });
   return pontos;
+}
+
+// Curtir ou descurtir uma review ou opinião
+export function curtir(id: string) {
+  const atual = ler();
+  const jaCurtiu = atual.curtidas.includes(id);
+  gravar({ ...atual, curtidas: jaCurtiu ? atual.curtidas.filter((c) => c !== id) : [...atual.curtidas, id] });
+}
+
+export function salvarMedidas(medidas: EstadoDemo["medidas"]) {
+  gravar({ ...ler(), medidas });
 }
 
 export function publicarReview(review: Review) {

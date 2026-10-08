@@ -1,5 +1,5 @@
-// Campo "cole o link". Usa o <Form> do Next: envia por GET para /buscar
-// e navega sem recarregar a página.
+// Campo de busca: aceita o nome do produto ou o link (Taobao, Weidian, 1688, agente).
+// Usa o <Form> do Next: envia por GET para /buscar, que decide entre busca e link.
 
 import Form from "next/form";
 
@@ -7,7 +7,7 @@ export default function BuscaLink({ grande = false, valor = "" }: { grande?: boo
   return (
     <Form action="/buscar" className={`flex w-full flex-col gap-2 sm:flex-row ${grande ? "" : "max-w-md"}`}>
       <label htmlFor={grande ? "link-grande" : "link"} className="sr-only">
-        Link do produto
+        Produto ou link
       </label>
       <input
         id={grande ? "link-grande" : "link"}
@@ -15,7 +15,7 @@ export default function BuscaLink({ grande = false, valor = "" }: { grande?: boo
         type="text"
         required
         defaultValue={valor}
-        placeholder="Cole o link do Taobao, Weidian, 1688 ou do agente"
+        placeholder="Busque um produto ou cole o link"
         className={`w-full min-w-0 rounded-md sm:flex-1 border-2 border-tinta bg-cartao px-3 text-tinta placeholder:text-apagado ${
           grande ? "h-14 text-base sm:text-lg" : "h-10 text-sm"
         }`}
@@ -26,7 +26,7 @@ export default function BuscaLink({ grande = false, valor = "" }: { grande?: boo
           grande ? "h-14 text-base" : "h-10 text-sm"
         }`}
       >
-        Ver reviews
+        Buscar
       </button>
     </Form>
   );

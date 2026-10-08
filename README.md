@@ -17,14 +17,14 @@ Para conferir antes de subir: `npm run lint` e `npm run build`.
 
 ## Roteiro para demonstrar
 
-1. Na tela inicial, clique em **Link da Weidian**. O link é reconhecido e abre a página do produto.
-2. Veja as notas por critério, a indicação de tamanho e a taxa de RL. Role até o fim das reviews: o plano gratuito mostra 10, e dá para desbloquear o resto com 100 pontos.
-3. Abra a aba **Fotos de QC**, entre em um QC que está no armazém e vote **RL** marcando um motivo. O carimbo aparece e você ganha pontos.
-4. Clique em **Postar QC**, envie uma foto qualquer e publique. No QC, marque **Enviei** e depois **Transformar em review**: a review nasce já ligada ao QC.
-5. Em **Planos**, assine o Plus (simulado) e volte a um produto: os filtros por corpo parecido e os filtros avançados passam a funcionar.
-6. O **perfil** mostra pontos, selos, a etapa de cada pedido e o extrato.
-7. Em **Ajuda** está o passo a passo do site, o glossário (QC, GL, RL, agente…) e perguntas frequentes. Na primeira visita, a tela inicial mostra um tutorial curto. Termos como GL e RL têm uma explicação ao tocar.
-8. A faixa amarela no topo tem **Recomeçar demonstração**, que zera tudo.
+1. A tela inicial abre com **Reviews em alta**: reviews de produtos recebidos, com selo de quem escreveu. Quem tem selo de avaliador (ouro, prata, bronze) aparece primeiro e com borda dourada.
+2. Clique numa foto: abre a galeria em tela cheia. Toque na foto para dar zoom e mova para percorrer.
+3. Em **Ver review completa**, curta a review. As curtidas contam para os selos de quem escreveu. Clique no nome da pessoa para ver o perfil dela.
+4. Digite "jaqueta" na busca da tela inicial ou abra **Produtos**. A busca por nome é livre. Clique em **Testar o Plus**, marque **Serve em mim** e informe altura e peso: cada produto mostra o tamanho que serviu em quem tem o seu corpo.
+5. Na página de um produto, veja notas, tamanho, o quadro "Serve em você" e as reviews. No plano gratuito aparecem 10, e dá para liberar o resto com 100 pontos.
+6. Em **Antes do envio**, abra uma peça, escolha GL ou RL, marque o motivo e escreva um comentário. Ele entra na lista de opiniões, que também pode receber curtidas.
+7. **Publicar review** fica no topo de todas as telas. O **perfil** mostra pontos, suas medidas, os selos com o progresso e suas peças e reviews.
+8. Em **Ajuda** estão o passo a passo, o glossário e as perguntas frequentes. A faixa amarela no topo tem **Recomeçar demonstração**, que zera tudo.
 
 ## Estrutura
 
@@ -36,13 +36,19 @@ src/
     produto/[id]/          página do produto
     qc/                    armazém, QC e postar QC
     review/nova/           publicar review
-    ranking/  loja/[id]/  planos/  perfil/  ajuda/
+    reviews/               feed de reviews
+    review/[id]/           página de uma review
+    produtos/              busca de produtos (filtros do Plus)
+    usuario/[nome]/        perfil público com selos
+    loja/[id]/  planos/  perfil/  ajuda/
   components/              peças de tela reutilizáveis
   lib/
     tipos.ts               modelos (viram as data classes do backend)
     link.ts                leitor de links → (plataforma, itemId)
     calculos.ts            notas, média bayesiana, tamanho, taxa de RL
     regras.ts              pontos e limite do plano gratuito
+    selos.ts               regras dos selos e nível de destaque
+    pessoas.ts             estatísticas e selos de cada pessoa
     glossario.ts  ajuda.ts textos de ajuda: termos, passo a passo e perguntas frequentes
     dados.ts               dados de exemplo (lojas, produtos, reviews, QCs)
     resumos.ts             dados + cálculos prontos para as telas
@@ -58,7 +64,7 @@ Algumas convenções do Next.js 16 usadas aqui:
 
 ## O que é de exemplo
 
-- Lojas, produtos e pessoas são fictícios. As fotos são desenhos gerados no código.
+- Lojas, marcas, produtos e pessoas são fictícios. As fotos são desenhos gerados no código.
 - Reviews e QCs são gerados a partir de uma semente fixa em `src/lib/dados.ts`.
 - Pontos, plano, votos e o que você publica ficam no `localStorage`.
 - Preço do Plus, valores de pontos e cotação do yuan são valores de exemplo.

@@ -42,9 +42,9 @@ export default async function PaginaLoja(props: PageProps<"/loja/[id]">) {
       <dl className="grid gap-4 sm:grid-cols-3">
         <Numero rotulo="Nota média das reviews" valor={formatarNota(notaGeral(reviews))} detalhe={plural(reviews.length, "review", "reviews")} />
         <Numero
-          rotulo="Peças reprovadas no QC (RL)"
+          rotulo="Peças reprovadas antes do envio"
           valor={rl ? formatarPorcentagem(rl.taxa) : "Sem dados"}
-          detalhe={rl ? `em ${plural(rl.total, "QC revisado", "QCs revisados")}` : "Nenhum QC decidido ainda"}
+          detalhe={rl ? `em ${plural(rl.total, "peça conferida", "peças conferidas")}` : "Nenhuma peça conferida ainda"}
         />
         <Numero rotulo="Produtos avaliados" valor={String(produtos.length)} detalhe="com página no Provado" />
       </dl>

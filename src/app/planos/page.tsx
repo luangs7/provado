@@ -7,7 +7,8 @@ const LINHAS: { recurso: string; gratuito: string; plus: string }[] = [
   { recurso: "Reviews por produto", gratuito: `Até ${LIMITE_GRATUITO}`, plus: "Todas" },
   { recurso: "Filtro por corpo parecido", gratuito: "Não", plus: "Sim" },
   { recurso: "Filtros por tamanho, caimento e agente", gratuito: "Não", plus: "Sim" },
-  { recurso: "Postar e votar em QCs", gratuito: "Sim", plus: "Sim" },
+  { recurso: "Busca com filtros de tipo, marca e \"serve em mim\"", gratuito: "Só por nome", plus: "Sim" },
+  { recurso: "Mostrar peças e opinar antes do envio", gratuito: "Sim", plus: "Sim" },
   { recurso: "Publicar reviews e perguntar", gratuito: "Sim", plus: "Sim" },
   { recurso: "Desbloquear reviews com pontos", gratuito: "Sim", plus: "Não precisa" },
 ];
@@ -16,8 +17,8 @@ const GANHOS = [
   { acao: "Review completa (fotos, tamanho e medidas)", pontos: PONTOS.reviewCompleta },
   { acao: "Review só com texto e notas", pontos: PONTOS.reviewSimples },
   { acao: "Resposta a uma pergunta", pontos: PONTOS.resposta },
-  { acao: "Voto no QC com o motivo da reprovação", pontos: PONTOS.votoComMotivo },
-  { acao: "Voto no QC (GL ou RL)", pontos: PONTOS.votoSimples },
+  { acao: "Opinião antes do envio com motivo ou comentário", pontos: PONTOS.votoComMotivo },
+  { acao: "Opinião antes do envio sem comentário", pontos: PONTOS.votoSimples },
 ];
 
 export default function Planos() {
@@ -26,7 +27,7 @@ export default function Planos() {
       <div className="flex max-w-2xl flex-col gap-2">
         <h1 className="text-4xl font-extrabold">Planos</h1>
         <p className="text-lg text-apagado">
-          A revisão de QC é gratuita para todo mundo. O Plus é para quem consulta muito e quer encontrar rápido as reviews
+          Ler e publicar reviews e opinar sobre peças antes do envio é gratuito. O Plus é para quem consulta muito e quer encontrar rápido as reviews
           de quem tem o corpo parecido.
         </p>
       </div>

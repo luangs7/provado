@@ -1,9 +1,13 @@
-// Cartões usados em várias telas: produto, QC e review.
+// Cartões usados em várias telas: produto, peça no armazém e review.
 
 import Link from "next/link";
 import type { ReactNode } from "react";
 import ArteProduto from "./ArteProduto";
+import BotaoCurtir from "./BotaoCurtir";
 import Carimbo from "./Carimbo";
+import Galeria from "./Galeria";
+import { Autor } from "./Selos";
+import { destaqueDoAutor } from "@/lib/pessoas";
 import { faixaAltura, faixaPeso, notaDaReview, vereditoDoQc, NOMES_CRITERIOS } from "@/lib/calculos";
 import { formatarData, formatarNota, formatarPorcentagem, plural } from "@/lib/formato";
 import type { Criterios, DecisaoQc, Produto, Qc, Review } from "@/lib/tipos";
@@ -21,11 +25,13 @@ export function CartaoProduto({ resumo }: { resumo: ReturnType<typeof resumoDoPr
       <ArteProduto categoria={produto.categoria} cor={produto.cor} className="w-20 shrink-0" />
       <div className="flex min-w-0 flex-col gap-1">
         <span className="font-semibold leading-snug group-hover:underline">{produto.titulo}</span>
-        <span className="text-sm text-apagado">{loja.nome}</span>
+        <span className="text-sm text-apagado">
+          {produto.marca}, {loja.nome}
+        </span>
         <span className="mt-auto flex flex-wrap gap-x-3 text-sm">
           <span className="font-semibold tabular-nums">{formatarNota(nota)}</span>
           <span className="text-apagado">{plural(totalReviews, "review", "reviews")}</span>
-          {rl && <span className="text-apagado">{formatarPorcentagem(rl.taxa)} reprovados no QC</span>}
+          {rl && <span className="text-apagado">{formatarPorcentagem(rl.taxa)} reprovadas antes do envio</span>}
         </span>
       </div>
     </Link>
@@ -97,17 +103,40 @@ export function CartaoQc({ qc, produto, titulo }: { qc: Qc; produto?: Produto; t
 
 const NOMES_CAIMENTO = { pequeno: "Ficou pequeno", certo: "Tamanho certo", grande: "Ficou grande" };
 
-export function CartaoReview({ review, produto, destaque = false }: { review: Review; produto: Produto; destaque?: boolean }) {
+type PropsReview = {
+  review: Review;
+  produto: Produto;
+  minha?: boolean; // review publicada por você nesta demonstração
+  comProduto?: boolean; // mostra o produto no topo (feeds)
+  resumida?: boolean; // corta o texto em 3 linhas
+};
+
+export function CartaoReview({ review, produto, minha = false, comProduto = false, resumida = false }: PropsReview) {
   const nota = notaDaReview(review);
+  const destaque = minha ? 0 : destaqueDoAutor(review.autor);
+  const borda = minha ? "border-cobalto" : destaque === 3 ? "border-fita border-2" : "border-linha";
+
   return (
-    <article className={`flex flex-col gap-3 rounded-lg border bg-cartao p-4 ${destaque ? "border-cobalto" : "border-linha"}`}>
-      <header className="flex flex-wrap items-baseline justify-between gap-2">
-        <p>
-          <span className="font-semibold">{review.autor}</span>
-          <span className="text-sm text-apagado">, {formatarData(review.data)}</span>
-          {destaque && <span className="ml-2 rounded bg-cobalto-claro px-1.5 py-0.5 text-xs font-semibold text-cobalto-escuro">Sua review</span>}
-        </p>
-        <span className="font-display text-lg font-bold tabular-nums">{formatarNota(nota)}</span>
+    <article className={`flex flex-col gap-3 rounded-lg border bg-cartao p-4 ${borda}`}>
+      {comProduto && (
+        <Link href={`/produto/${produto.id}`} className="group flex items-center gap-3 border-b border-linha pb-3">
+          <ArteProduto categoria={produto.categoria} cor={produto.cor} className="w-12 shrink-0" />
+          <span className="min-w-0">
+            <span className="block truncate font-semibold group-hover:underline">{produto.titulo}</span>
+            <span className="text-sm text-apagado">{produto.marca}</span>
+          </span>
+        </Link>
+      )}
+
+      <header className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <Autor nome={review.autor} />
+          <span className="text-sm text-apagado">
+            {formatarData(review.data)}
+            {minha && <span className="ml-2 rounded bg-cobalto-claro px-1.5 py-0.5 text-xs font-semibold text-cobalto-escuro">Sua review</span>}
+          </span>
+        </div>
+        <span className="font-display text-2xl font-bold tabular-nums">{formatarNota(nota)}</span>
       </header>
 
       <ul className="flex flex-wrap gap-1.5 text-xs">
@@ -123,23 +152,22 @@ export function CartaoReview({ review, produto, destaque = false }: { review: Re
         <Etiqueta>{review.canal}</Etiqueta>
       </ul>
 
-      <p className="max-w-prose leading-relaxed">{review.texto}</p>
+      <p className={`max-w-prose leading-relaxed ${resumida ? "line-clamp-3" : ""}`}>{review.texto}</p>
 
-      {review.fotos.length > 0 && (
-        <div className="flex gap-1.5">
-          {review.fotos.map((f, i) => (
-            <ArteProduto key={i} categoria={produto.categoria} cor={produto.cor} foto={f} className="w-16" />
-          ))}
-        </div>
-      )}
+      <Galeria fotos={review.fotos} categoria={produto.categoria} cor={produto.cor} titulo={`Fotos da review de ${review.autor}`} />
 
-      <footer className="flex flex-wrap gap-x-4 text-sm text-apagado">
-        {review.qcId && (
-          <Link href={`/qc/${review.qcId}`} className="underline underline-offset-2 hover:text-tinta">
-            Começou como QC no armazém
+      <footer className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-apagado">
+        <BotaoCurtir id={review.id} curtidas={review.curtidas} proprio={minha} />
+        {!minha && (
+          <Link href={`/review/${review.id}`} className="font-semibold text-cobalto hover:underline">
+            Ver review completa
           </Link>
         )}
-        <span>{plural(review.util, "pessoa achou útil", "pessoas acharam útil")}</span>
+        {review.qcId && (
+          <Link href={`/qc/${review.qcId}`} className="underline underline-offset-2 hover:text-tinta">
+            Tem fotos de antes do envio
+          </Link>
+        )}
       </footer>
     </article>
   );

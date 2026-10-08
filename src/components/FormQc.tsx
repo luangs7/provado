@@ -112,7 +112,7 @@ export default function FormQc({ produto: produtoInicial, link: linkInicial = ""
 
       <div className="flex flex-wrap items-center gap-4">
         <button type="submit" className="rounded-md bg-cobalto px-5 py-2.5 font-semibold text-white hover:bg-cobalto-escuro">
-          Postar QC
+          Pedir opinião
         </button>
         <p className="text-sm text-apagado">
           Comprou direto com a loja? Não há fotos de armazém.{" "}

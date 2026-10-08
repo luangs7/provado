@@ -10,10 +10,13 @@ import type {
   DecisaoQc,
   Loja,
   MotivoRl,
+  Opiniao,
   Pergunta,
   Produto,
   Qc,
   Review,
+  Usuario,
+  Veredito,
 } from "./tipos";
 
 // "Hoje" fixo do protótipo, para as datas não mudarem a cada visita
@@ -55,16 +58,16 @@ const ROUPA = ["S", "M", "L", "XL", "XXL"];
 const UNICO = ["Único"];
 
 export const produtos: Produto[] = [
-  { id: "aero-knit", titulo: "Tênis de corrida Aero Knit", categoria: "tenis", lojaId: "jiahe", plataforma: "weidian", itemId: "7291054418", precoYuan: 289, cor: "#8fa3b8", corNome: "Cinza-azulado", tamanhos: TENIS },
-  { id: "ridge-trilha", titulo: "Tênis de trilha Ridge", categoria: "tenis", lojaId: "beifang", plataforma: "taobao", itemId: "684512937710", precoYuan: 340, cor: "#6b7b4f", corNome: "Verde-oliva", tamanhos: TENIS },
-  { id: "court-couro", titulo: "Tênis casual Court em couro", categoria: "tenis", lojaId: "ruyi", plataforma: "taobao", itemId: "698877120034", precoYuan: 259, cor: "#ecebe4", corNome: "Branco", tamanhos: TENIS },
-  { id: "corta-vento", titulo: "Jaqueta corta-vento Ripstop", categoria: "jaquetas", lojaId: "beifang", plataforma: "taobao", itemId: "702233198845", precoYuan: 219, cor: "#2f4a6d", corNome: "Azul-marinho", tamanhos: ROUPA },
-  { id: "puffer-leve", titulo: "Jaqueta puffer leve", categoria: "jaquetas", lojaId: "jiahe", plataforma: "weidian", itemId: "7319928841", precoYuan: 299, cor: "#6e2b33", corNome: "Vinho", tamanhos: ROUPA },
-  { id: "camiseta-260", titulo: "Camiseta pesada 260g", categoria: "camisetas", lojaId: "mianhua", plataforma: "1688", itemId: "651820394471", precoYuan: 39, cor: "#e6dfcf", corNome: "Off-white", tamanhos: ROUPA },
-  { id: "moletom-400", titulo: "Moletom com capuz 400g", categoria: "moletons", lojaId: "ruyi", plataforma: "taobao", itemId: "715530982216", precoYuan: 168, cor: "#7d6a5a", corNome: "Café", tamanhos: ROUPA },
-  { id: "cargo-utility", titulo: "Calça cargo Utility", categoria: "calcas", lojaId: "ruyi", plataforma: "taobao", itemId: "709981234567", precoYuan: 145, cor: "#4d4a42", corNome: "Grafite", tamanhos: ROUPA },
-  { id: "dad-hat", titulo: "Boné dad hat lavado", categoria: "bones", lojaId: "tiandi", plataforma: "weidian", itemId: "7188823410", precoYuan: 59, cor: "#c9b28a", corNome: "Areia", tamanhos: UNICO },
-  { id: "rolltop-25", titulo: "Mochila rolltop 25L", categoria: "mochilas", lojaId: "xingyun", plataforma: "weidian", itemId: "7402219987", precoYuan: 198, cor: "#30343a", corNome: "Preta", tamanhos: UNICO },
+  { id: "aero-knit", titulo: "Tênis de corrida Aero Knit", marca: "Velo", categoria: "tenis", lojaId: "jiahe", plataforma: "weidian", itemId: "7291054418", precoYuan: 289, cor: "#8fa3b8", corNome: "Cinza-azulado", tamanhos: TENIS },
+  { id: "ridge-trilha", titulo: "Tênis de trilha Ridge", marca: "Trailform", categoria: "tenis", lojaId: "beifang", plataforma: "taobao", itemId: "684512937710", precoYuan: 340, cor: "#6b7b4f", corNome: "Verde-oliva", tamanhos: TENIS },
+  { id: "court-couro", titulo: "Tênis casual Court em couro", marca: "Courtline", categoria: "tenis", lojaId: "ruyi", plataforma: "taobao", itemId: "698877120034", precoYuan: 259, cor: "#ecebe4", corNome: "Branco", tamanhos: TENIS },
+  { id: "corta-vento", titulo: "Jaqueta corta-vento Ripstop", marca: "Northgale", categoria: "jaquetas", lojaId: "beifang", plataforma: "taobao", itemId: "702233198845", precoYuan: 219, cor: "#2f4a6d", corNome: "Azul-marinho", tamanhos: ROUPA },
+  { id: "puffer-leve", titulo: "Jaqueta puffer leve", marca: "Northgale", categoria: "jaquetas", lojaId: "jiahe", plataforma: "weidian", itemId: "7319928841", precoYuan: 299, cor: "#6e2b33", corNome: "Vinho", tamanhos: ROUPA },
+  { id: "camiseta-260", titulo: "Camiseta pesada 260g", marca: "Básico & Co.", categoria: "camisetas", lojaId: "mianhua", plataforma: "1688", itemId: "651820394471", precoYuan: 39, cor: "#e6dfcf", corNome: "Off-white", tamanhos: ROUPA },
+  { id: "moletom-400", titulo: "Moletom com capuz 400g", marca: "Básico & Co.", categoria: "moletons", lojaId: "ruyi", plataforma: "taobao", itemId: "715530982216", precoYuan: 168, cor: "#7d6a5a", corNome: "Café", tamanhos: ROUPA },
+  { id: "cargo-utility", titulo: "Calça cargo Utility", marca: "Utilis", categoria: "calcas", lojaId: "ruyi", plataforma: "taobao", itemId: "709981234567", precoYuan: 145, cor: "#4d4a42", corNome: "Grafite", tamanhos: ROUPA },
+  { id: "dad-hat", titulo: "Boné dad hat lavado", marca: "Capstone", categoria: "bones", lojaId: "tiandi", plataforma: "weidian", itemId: "7188823410", precoYuan: 59, cor: "#c9b28a", corNome: "Areia", tamanhos: UNICO },
+  { id: "rolltop-25", titulo: "Mochila rolltop 25L", marca: "Rolltek", categoria: "mochilas", lojaId: "xingyun", plataforma: "weidian", itemId: "7402219987", precoYuan: 198, cor: "#30343a", corNome: "Preta", tamanhos: UNICO },
 ];
 
 // Como cada produto "se comporta" na geração dos dados de exemplo.
@@ -84,12 +87,31 @@ const perfis: Record<string, Perfil> = {
   "rolltop-25": { base: { material: 3.6, fidelidade: 3.8, tamanho: 4, custoBeneficio: 3.9 }, vies: 0, reviews: 8, qcs: 3, taxaRl: 0.35 },
 };
 
-const AUTORES = [
+export const AUTORES = [
   "rafa.importa", "lucasfz", "bia.streetwear", "thi.go", "gabs", "marcelo.k",
   "joaopedro", "duda.santos", "caio.br", "fer.oliveira", "matheuslm", "pedrin",
   "nath.alves", "rodrigo.m", "leo_sp", "carol.tx", "henrique", "julia.r",
   "igor.cwb", "vitor.b", "amanda.l", "renan92", "tati.s", "felipe.dz",
 ];
+
+// Algumas pessoas escrevem reviews que a comunidade curte muito.
+// Isso define a faixa de curtidas que as contribuições delas recebem nos exemplos.
+const POPULARIDADE: Record<string, "ouro" | "prata" | "bronze"> = {
+  "rafa.importa": "ouro",
+  "bia.streetwear": "ouro",
+  "marcelo.k": "prata",
+  "caio.br": "prata",
+  "duda.santos": "bronze",
+  henrique: "bronze",
+};
+
+function sortearCurtidas(s: () => number, autor: string) {
+  const faixa = POPULARIDADE[autor];
+  if (faixa === "ouro") return entre(s, 96, 190);
+  if (faixa === "prata") return entre(s, 45, 95);
+  if (faixa === "bronze") return entre(s, 18, 44);
+  return entre(s, 0, 16);
+}
 
 export const ANGULOS: Record<Categoria, string[]> = {
   tenis: ["Frente", "Lateral", "Sola", "Etiqueta"],
@@ -184,10 +206,19 @@ const TAMANHO_UNICO: Partial<Record<Categoria, string[]>> = {
   mochilas: ["Cabe notebook de 15 polegadas com folga.", "Os zíperes são firmes."],
 };
 
+// Detalhes que quem escreve reviews muito curtidas costuma incluir
+const DETALHES = [
+  "Medi a palmilha: 27 cm no 42, bate com a tabela da loja.",
+  "Comparei com a peça que já tinha: tecido mais grosso e costura dupla na barra.",
+  "O bordado do peito está alinhado e sem fio solto.",
+  "Lavei duas vezes e não desbotou nem encolheu.",
+  "As fotos estão com luz natural para mostrar a cor real.",
+];
+
 const OBSERVACOES_QC = [
   "Primeira compra nessa loja, quero conferir antes de enviar.",
   "Achei a costura do lado esquerdo estranha, o que acham?",
-  "A cor parece mais clara do que no anúncio. GL?",
+  "A cor parece mais clara do que no anúncio. Posso enviar?",
   "Pedi as medidas, estão nas fotos. Bate com a tabela?",
   "Vai junto com outras peças no mesmo pacote.",
   "Conferi a etiqueta e parece tudo certo.",
@@ -236,27 +267,32 @@ function gerarReviews(produto: Produto, perfil: Perfil): Review[] {
     const dias = entre(s, 2, 160);
     const nivel = notas.material >= 4 ? "alta" : notas.material === 3 ? "media" : "baixa";
     const frasesTamanho = TAMANHO_UNICO[produto.categoria] ?? TAMANHO[caimento];
+    const autor = AUTORES[(i * 7 + sementeDe(produto.id)) % AUTORES.length];
+    const detalhista = POPULARIDADE[autor] !== undefined;
     const texto = [
       escolher(s, ABERTURAS).replace("{dias}", String(entre(s, 12, 34))),
       escolher(s, QUALIDADE[nivel]),
       escolher(s, frasesTamanho),
-    ].join(" ");
+      detalhista ? escolher(s, DETALHES) : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     const angulos = ANGULOS[produto.categoria];
     lista.push({
       id: `${produto.id}-r${i + 1}`,
       produtoId: produto.id,
-      autor: AUTORES[(i * 7 + sementeDe(produto.id)) % AUTORES.length],
+      autor,
       data: diasAtras(dias, entre(s, 0, 20)),
       tamanho,
-      altura: temMedidas ? altura : undefined,
-      peso: temMedidas ? peso : undefined,
       caimento,
       notas,
       texto,
       canal,
-      fotos: angulos.slice(0, entre(s, 0, 3)),
-      util: entre(s, 0, 24),
+      fotos: detalhista ? angulos : angulos.slice(0, entre(s, 0, 3)),
+      altura: temMedidas || detalhista ? altura : undefined,
+      peso: temMedidas || detalhista ? peso : undefined,
+      curtidas: sortearCurtidas(s, autor),
     });
   }
 
@@ -306,6 +342,78 @@ function gerarQcs(produto: Produto, perfil: Perfil): Qc[] {
 
 export const reviews: Review[] = produtos.flatMap((p) => gerarReviews(p, perfis[p.id]));
 export const qcs: Qc[] = produtos.flatMap((p) => gerarQcs(p, perfis[p.id]));
+
+// ---------- Opiniões escritas sobre as fotos do armazém ----------
+
+const OPINIAO_GL = [
+  "Costura reta e etiqueta bem posicionada. Pode mandar.",
+  "A cor bate com as fotos do anúncio. Tranquilo para enviar.",
+  "Medidas dentro da tabela, pode enviar.",
+  "Comparei com o meu, que chegou mês passado: está igual.",
+];
+
+const OPINIAO_RL: Record<MotivoRl, string[]> = {
+  Costura: [
+    "A costura do símbolo está diferente das outras unidades que vi aqui. Eu pediria troca.",
+    "A costura da lateral está torta, dá para ver na segunda foto.",
+  ],
+  "Cor diferente": ["Está bem mais clara que o anúncio. Se a cor importa para você, troca."],
+  "Mancha ou sujeira": ["Tem uma mancha perto da gola na primeira foto. Pede para o agente olhar."],
+  "Medida fora da tabela": ["A medida do peito deu 4 cm a menos que a tabela. Vai vestir apertado."],
+  "Defeito no material": ["Parece ter um fio puxado na frente. Melhor pedir outra unidade."],
+  Acabamento: ["O acabamento da barra está irregular. Vale pedir outra unidade."],
+};
+
+function gerarOpinioes(qc: Qc): Opiniao[] {
+  const s = criarSorteio(sementeDe("opinioes-" + qc.id));
+  const total = qc.votos.gl + qc.votos.rl;
+  const quantidade = Math.min(total, entre(s, 1, 4));
+  const motivos = Object.keys(qc.votos.motivos) as MotivoRl[];
+  const lista: Opiniao[] = [];
+  let rlRestantes = qc.votos.rl;
+
+  for (let i = 0; i < quantidade; i++) {
+    const veredito: Veredito = rlRestantes > 0 && (i === 0 || s() < 0.5) ? "RL" : "GL";
+    if (veredito === "RL") rlRestantes--;
+    const motivo: MotivoRl | undefined =
+      veredito === "RL" ? escolher<MotivoRl>(s, motivos.length ? motivos : ["Acabamento"]) : undefined;
+    const autor = AUTORES[(sementeDe(qc.id) + i * 11) % AUTORES.length];
+    lista.push({
+      id: `${qc.id}-op${i + 1}`,
+      qcId: qc.id,
+      autor: autor === qc.autor ? AUTORES[(AUTORES.indexOf(autor) + 1) % AUTORES.length] : autor,
+      veredito,
+      motivo,
+      texto: escolher(s, motivo ? OPINIAO_RL[motivo] : OPINIAO_GL),
+      data: new Date(new Date(qc.data).getTime() + (i + 1) * 3_600_000).toISOString(),
+      curtidas: sortearCurtidas(s, autor),
+    });
+  }
+  return lista;
+}
+
+export const opinioes: Opiniao[] = qcs.flatMap(gerarOpinioes);
+
+// ---------- Pessoas ----------
+
+// Histórico de contribuições de cada pessoa além do que aparece nos exemplos
+export const usuarios: Usuario[] = AUTORES.map((nome) => {
+  const s = criarSorteio(sementeDe("usuario-" + nome));
+  const faixa = POPULARIDADE[nome];
+  const frequente = !faixa && s() < 0.3; // compra bastante, mas suas reviews não viralizaram
+  const reviewsAntigas = faixa === "ouro" ? entre(s, 22, 40) : faixa ? entre(s, 8, 18) : frequente ? entre(s, 16, 24) : entre(s, 0, 6);
+  return {
+    nome,
+    desde: entre(s, 2021, 2026),
+    historico: {
+      reviews: reviewsAntigas,
+      completas: Math.round(reviewsAntigas * (faixa ? 0.8 : 0.3)),
+      respostas: faixa ? entre(s, 6, 20) : entre(s, 0, 5),
+      opinioes: faixa ? entre(s, 15, 45) : entre(s, 0, 10),
+      compras: reviewsAntigas + entre(s, 2, 10),
+    },
+  };
+});
 
 // Perguntas escritas à mão para os produtos principais
 export const perguntas: Pergunta[] = [
@@ -377,6 +485,10 @@ export const perguntas: Pergunta[] = [
 export const buscarProduto = (id: string) => produtos.find((p) => p.id === id);
 export const buscarLoja = (id: string) => lojas.find((l) => l.id === id);
 export const buscarQc = (id: string) => qcs.find((q) => q.id === id);
+export const buscarReview = (id: string) => reviews.find((r) => r.id === id);
+export const buscarUsuario = (nome: string) => usuarios.find((u) => u.nome === nome);
+export const opinioesDo = (qcId: string) => opinioes.filter((o) => o.qcId === qcId);
+export const MARCAS = [...new Set(produtos.map((p) => p.marca))].sort();
 export const reviewsDo = (produtoId: string) => reviews.filter((r) => r.produtoId === produtoId);
 export const qcsDo = (produtoId: string) => qcs.filter((q) => q.produtoId === produtoId);
 export const perguntasDo = (produtoId: string) => perguntas.filter((q) => q.produtoId === produtoId);
