@@ -337,4 +337,51 @@ Ordem sugerida:
 - GitHub: `luangs7/provado` (branch `main`). O repositório nasceu com um LICENSE; os commits do protótipo foram colocados por cima.
 - Cópia local do Luan: `~/Development/provado`.
 - Mensagens de commit em português, descrevendo o que mudou para quem usa.
+- **Deploy:** o repositório está ligado ao Vercel (desde out. 2026). Com a integração padrão do Vercel com o GitHub, push na `main` publica em produção e push em outra branch gera uma prévia com link próprio.
+- **Regra do Luan: ao terminar cada alteração, perguntar duas coisas antes de agir:**
+  1. **Vamos subir?** Se sim, em uma branch nova ou direto na `main`?
+  2. **Vamos fazer o deploy?**
+  Não fazer push nem deploy sem as duas respostas.
+
+### Branches, commits e PRs (regra do Luan)
+- **Toda implementação em uma branch com nome da feature**, criada a partir da `main` atualizada:
+  `feature/<nome>`, `fix/<nome>`, `refactor/<nome>`, `docs/<nome>`, `chore/<nome>`, `ci/<nome>` (nome em português, minúsculo, com hífen; ex.: `feature/curtidas-em-opinioes`).
+- **Tudo em porções pequenas**, para facilitar revisão, visualização e rollback:
+  - um commit por passo lógico (nada de "commit de tudo no fim");
+  - um PR por assunto; PR grande deve ser quebrado em PRs encadeados;
+  - referência de tamanho: até ~300 linhas alteradas por PR, fora arquivos gerados.
+- **Mensagens no padrão Conventional Commits**, com descrição em português: `feat: curtidas em opiniões`, `fix: tamanho único fora do serve em mim`, `refactor: separa CartaoReview em arquivo próprio`, `docs:`, `test:`, `ci:`, `chore:`.
+- **Merge na `main` só por PR**, com os gates da CI passando. Merge do tipo squash: cada PR vira um commit na `main`, e o rollback é reverter esse commit.
+
+### CI/CD com GitHub Actions (planejado, ainda não implementado)
+Objetivo: nada chega à produção sem passar pelos gates, e o deploy no Vercel é feito pela pipeline, não pela integração automática do Vercel.
+
+**Gates do PR (`ci.yml`, em todo PR para a `main`), jobs em paralelo:**
+1. **Qualidade:** `npm ci` com cache, ESLint (inclui a regra de fronteiras entre features), checagem de formatação (Prettier) e TypeScript (`tsc --noEmit`, depois de `next typegen`).
+2. **Testes unitários:** Vitest nas regras puras (leitor de links, cálculos, selos, pontos), com relatório de cobertura.
+3. **Build:** `next build`.
+4. **Testes de ponta a ponta:** Playwright no build, cobrindo os fluxos principais (busca por link, review, curtir, opinião antes do envio, Plus e serve em mim), em desktop e celular.
+5. **Segurança:** `npm audit` (falha em vulnerabilidade alta), Dependency Review nas dependências novas e CodeQL.
+6. **Higiene do PR:** nome da branch no padrão, título no padrão Conventional Commits e aviso quando o PR passar do tamanho de referência.
+
+**Deploy (`deploy.yml`), seguindo o guia oficial do Vercel para GitHub Actions:**
+- **Prévia:** em cada PR, depois dos gates, `vercel pull --environment=preview`, `vercel build` e `vercel deploy --prebuilt`; o link da prévia é comentado no PR.
+- **Produção:** no merge na `main`, depois dos gates, `vercel build --prod` e `vercel deploy --prebuilt --prod`, num GitHub Environment `production` com **aprovação manual** (é a resposta para "vamos fazer o deploy?").
+- **Depois do deploy:** smoke test com Playwright contra a URL publicada. Se falhar, `vercel rollback` para a versão anterior.
+- **Segredos:** `VERCEL_TOKEN`, `VERCEL_ORG_ID` e `VERCEL_PROJECT_ID` como secrets do repositório.
+- **`vercel.json` com `"git": { "deploymentEnabled": false }`**, para o Vercel não publicar sozinho a cada push e não duplicar o deploy da pipeline.
+
+**Proteção da `main` no GitHub:** exigir PR, exigir os checks da CI, exigir branch atualizada, bloquear push direto e force push.
+
+**Manutenção:** Dependabot semanal para npm e para as actions, em PRs pequenos.
+
+**Ordem de implementação (um PR por item):**
+1. `ci/gates-de-qualidade`: workflow com lint, tipos e build.
+2. `chore/prettier`: Prettier e checagem de formatação no CI.
+3. `test/vitest-regras`: Vitest e testes das regras puras.
+4. `test/playwright-fluxos`: testes de ponta a ponta e job no CI.
+5. `ci/seguranca`: audit, Dependency Review, CodeQL e Dependabot.
+6. `ci/higiene-de-pr`: checagem de nome de branch, título e tamanho.
+7. `ci/deploy-vercel`: prévia por PR, produção com aprovação, smoke test e rollback; desliga o deploy automático do Vercel.
+8. Configurar a proteção da `main` (feito pelo Luan nas configurações do GitHub).
 - Antes de subir: `npm run lint` e `npm run build` sem erros.
