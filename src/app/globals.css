@@ -1,26 +1,84 @@
 @import "tailwindcss";
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/instrument-sans";
+
+/*
+  Identidade visual: um armazém de conferência.
+  Fundo cinza-frio de galpão, tinta azul-marinho, cobalto para ações,
+  amarelo de fita adesiva para status e os carimbos GL (verde) e RL (vermelho).
+  Tema claro apenas, por escolha: deixa o código mais simples nesta fase.
+*/
+@theme {
+  --color-papel: #eef1f5;
+  --color-cartao: #ffffff;
+  --color-tinta: #131c2b;
+  --color-apagado: #5a6577;
+  --color-linha: #d3d9e3;
+  --color-cobalto: #2c54e0;
+  --color-cobalto-escuro: #1f3fb0;
+  --color-cobalto-claro: #e2e8fc;
+  --color-fita: #f3c63f;
+  --color-fita-tinta: #2a2206;
+  --color-gl: #1f8a5b;
+  --color-gl-claro: #e3f3eb;
+  --color-rl: #c2372b;
+  --color-rl-claro: #fbe7e5;
+
+  --font-display: "Bricolage Grotesque Variable", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Instrument Sans Variable", "Segoe UI", system-ui, sans-serif;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-papel);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-cobalto);
+  outline-offset: 2px;
+}
+
+/* Carimbo de conferência (GL / RL): o elemento de identidade do site */
+.carimbo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border: 4px double currentColor;
+  border-radius: 6px;
+  padding: 0.1em 0.45em;
+  line-height: 1;
+  transform: rotate(-8deg);
+  opacity: 0.92;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .carimbo-entrada {
+    animation: carimbar 260ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  }
+}
+
+@keyframes carimbar {
+  from {
+    transform: rotate(-8deg) scale(1.8);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(-8deg) scale(1);
+    opacity: 0.92;
+  }
 }
