@@ -118,6 +118,9 @@ Pessoas que importam produtos da China (direto com a loja, por catálogo, ou por
 | **Agente** | Empresa que compra na China por você (ex.: CSSBuy) e guarda no armazém | |
 | **Armazém** | Onde o agente guarda a peça até você mandar enviar | |
 | **Caimento** | Como a peça vestiu: pequena, certa ou grande | |
+| **Batch** (lote) | Lote de fabricação de um mesmo modelo. Lojas diferentes vendem batches diferentes, e um tênis pode ser ótimo num batch e ruim em outro ("XE Batch", "GT Batch") | Termo que a comunidade usa e procura; mostrar como "Batch" com explicação ("lote de fabricação") |
+| **Linha de frete** | Método de envio do agente para o Brasil (BJ-EUB, HZ-EMS, SH-SAL, JD-EXP, FJ-BR, PostNL…) | Mostrar o código da linha, que é como a comunidade conhece |
+| **Haul** | Pacote com várias compras que chegou junto | Na interface, "pacote recebido" |
 
 **Regra de texto pedida pelo Luan:** priorizar linguagem comum. O uso contínuo de QC, GL e RL nas descrições deixa o texto maçante. Esses termos aparecem só onde a comunidade espera vê-los (carimbo, votação, glossário), e sempre com explicação. O componente `Termo` mostra a definição ao tocar.
 
@@ -197,6 +200,45 @@ Pontos servem para liberar reviews sem pagar, virar cupons em lojas parceiras (f
 
 ---
 
+## 4.12 Backlog priorizado (vindo da análise da comunidade no Discord, out. 2026)
+
+O Luan mostrou prints da comunidade Fugazzi Culture no Discord (canais `compras`, `review`, `pacotes-recebidos`, `pedir-link`, `dúvidas`, `chat-geral`). Estas são as funcionalidades que saíram dessa análise, para implementar depois, cada uma em branch própria e PRs pequenos.
+
+### Prioridade 1: Batch (lote) do produto — **mais importante para o público**
+O que a comunidade faz hoje: títulos como "Nike Vomero Premium — XE Batch" e "GT Batch", posts como "Review On Cloud — Análise de 5 batch diferentes" e respostas como "essa versão está vindo muito boa, bem consolidada". **Um mesmo modelo pode ser ótimo num batch e ruim em outro, e essa informação é ouro para quem compra.**
+- O produto passa a ter **batches**: o produto é o modelo; cada batch tem nome, lojas que vendem, faixa de preço, nota, caimento e peças reprovadas próprios.
+- Review e peça antes do envio passam a indicar o batch.
+- **Comparação lado a lado** dos batches de um modelo: notas por critério, tamanho, preço, peças reprovadas e fotos.
+- Página do produto mostra "melhor batch hoje" e alerta quando um batch piora (mais reprovações recentes).
+- Filtro por batch nas reviews e na busca.
+- Adicionar **Batch** ao glossário do site (`src/lib/glossario.ts`) e à ajuda.
+- Risco: "batch" é vocabulário típico do mercado de réplicas. Reforça o item jurídico da seção 6.
+
+### Prioridade 2: Pacotes recebidos, frete e taxação
+O que a comunidade faz hoje: posts em `pacotes-recebidos` com peso, método de envio, data de envio e de chegada, se foi taxado e o valor, frete em ¥, e tags de região (Sudeste, Nordeste…), faixa de peso (0 a 3 kg, 3 a 5 kg…) e linha de frete. A pergunta mais comum nos canais de conversa é "qual frete está melhor?".
+- Nova entidade **pacote**: reúne várias compras, com linha de frete, peso, região, datas, frete pago e taxa paga.
+- **Página por linha de frete** com tempo médio até chegar, percentual de pacotes taxados e taxa média por kg, separados por região e faixa de peso.
+- Filtros por região e faixa de peso.
+- Sobre declaração e taxas (canais `ajuda-declaração` e `taxas-declaração`, muito movimentados): mostrar **dados da comunidade**, nunca orientação fiscal.
+
+### Prioridade 3: Reviews com mais estrutura
+- **Critérios por categoria** (ex.: óculos avaliam qualidade, peso, estojo e detalhes; tênis, conforto, acabamento, fidelidade…), em vez dos mesmos quatro critérios para tudo.
+- **Estágio da review:** "Primeiras impressões" e "Usado e testado", com a possibilidade de **atualizar** a review depois de meses de uso (linha do tempo da review).
+- Vídeo por link já previsto; aparece bastante.
+
+### Prioridade 4: Pedir link (achar onde comprar)
+O que a comunidade faz hoje: em `pedir-link`, a pessoa posta a foto de uma peça e pergunta onde comprar; outros respondem com links.
+- Pedido com foto; respostas com links; cada link vira (ou aponta para) a página do produto e do batch.
+- Alimenta o catálogo sozinho.
+
+### Ajustes menores (podem entrar junto com os itens acima)
+- **Leitor de links:** links curtos da CSSBuy (`cssb.uy/...`), Goofish/Xianyu e catálogos Yupoo de lojas.
+- **Formulário guiado** no estilo do "Guia de postagem" fixado no Discord: campos certos por categoria (preço, tamanho, peso, link, tempo de espera, medidas).
+- **Dados da compra** antes do envio: preço pago, faixa de preço e tempo de espera até chegar no armazém, gerando números por loja.
+- **Seguir** produto, batch ou peça, com aviso de novidades.
+- **Filtro por região** em reviews e pacotes.
+- Eventos e sorteios da comunidade (o Discord tem canal de evento): avaliar depois.
+
 ## 5. Fora do MVP (próximas fases)
 
 - **Provador virtual com IA:** depende de APIs pagas, custo por uso e resultado irregular. O filtro por corpo parecido com fotos reais entrega boa parte do valor por enquanto.
@@ -204,7 +246,6 @@ Pontos servem para liberar reviews sem pagar, virar cupons em lojas parceiras (f
 - Aplicativo mobile.
 - Bot no Discord que transforma reviews postadas em páginas do site.
 - Moderação avançada, compra verificada (print do pedido), seguir produto.
-- Dados de frete e taxação no Brasil (sugerido, ainda não decidido).
 
 ---
 
